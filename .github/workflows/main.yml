@@ -45,16 +45,35 @@ jobs:
     #Publish dotnet objects
     - name: DotNET Publish Web Site
       run: dotnet publish AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb.csproj --configuration Release -p:Version=${{env.buildVersion}}
-
+    
+    #Publish build artifacts to GitHub
+    - name: Upload website build artifacts back to GitHub
+      uses: actions/upload-artifact@master
+      with:
+        name: webapp
+        path: AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/bin/Release/netcoreapp3.0/publish
+  
+  #Deploy the artifacts to Azure
+  Deploy:
+    runs-on: windows-latest
+    needs: build 
+    
+    steps:
     # Login with the secret SP details
     - name: Log into Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_SP }}
-    
+        
+    #Download the artifacts from GitHub
+    - name: Download webapp artifact
+      uses: actions/download-artifact@v1.0.0
+      with:
+        name: webapp
+            
     #Deploy service and website to Azure staging slots
     - name: Deploy web service to Azure WebApp
       uses: Azure/webapps-deploy@v1
       with:
         app-name: pipepinestoactions
-        package: AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/bin/Release/netcoreapp3.0/publish/
+        package: webapp
