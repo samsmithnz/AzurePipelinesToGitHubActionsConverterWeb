@@ -75,5 +75,6 @@ jobs:
     - name: Deploy web service to Azure WebApp
       uses: Azure/webapps-deploy@v1
       with:
-        app-name: pipepinestoactions
+        app-name: pipelinestoactions
         package: webapp
+        slot-name: production
