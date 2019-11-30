@@ -16,7 +16,7 @@ jobs:
       run: |
         Write-Host "Generating Build Number"
         #Get the version from the csproj file
-        $xml = [Xml] (Get-Content AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb.csproj)
+        $xml = [Xml] (Get-Content PipelinesToActions/PipelinesToActions/PipelinesToActions.csproj)
         $initialVersion = [Version] $xml.Project.PropertyGroup.Version
         Write-Host "Initial Version: " $version
         $spliteVersion = $initialVersion -Split "\."
@@ -44,14 +44,14 @@ jobs:
 
     #Publish dotnet objects
     - name: DotNET Publish Web Site
-      run: dotnet publish AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb.csproj --configuration Release -p:Version=${{env.buildVersion}}
+      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActions.csproj --configuration Release -p:Version=${{env.buildVersion}}
     
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
       uses: actions/upload-artifact@master
       with:
         name: webapp
-        path: AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/bin/Release/netcoreapp3.0/publish
+        path: PipelinesToActions/PipelinesToActions/bin/Release/netcoreapp3.0/publish
   
   #Deploy the artifacts to Azure
   Deploy:
