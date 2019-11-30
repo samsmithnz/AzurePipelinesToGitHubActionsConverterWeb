@@ -39,8 +39,8 @@ jobs:
       shell: powershell
       
     #Build and test service   
-    - name: Run automated unit and integration tests
-      run: dotnet build AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb.csproj --configuration Release
+    #- name: Run automated unit and integration tests
+    #  run: dotnet build AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb.csproj --configuration Release
 
     #Publish dotnet objects
     - name: DotNET Publish Web Site
@@ -57,4 +57,4 @@ jobs:
       uses: Azure/webapps-deploy@v1
       with:
         app-name: pipepinestoactions
-        package: AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/bin/Release/netcoreapp3.0/publish
+        package: AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/bin/Release/netcoreapp3.0/publish/
