@@ -3,21 +3,69 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Please paste your Azure Pipelines YAML into the left textbox</h1>
-    <p>Note that this is just a one way transition</p>
+    <h3>Please paste your Azure Pipelines YAML into the textbox</h3>
+    <p>Note that ***add details***</p>
     <div class="container">
         <div class="row">
-            <div class="col-sm-6">
-                <textarea rows="5" cols="60" name="description">
-                    Azure DevOps Pipeline yaml
+            <div class="col-sm-12">
+                <input type="button" value="Process YAML (Not wired up yet)" /><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" style="height:70vh;">
+                <div class="codeHeader lang-html" data-bi-name="code-header">
+                    <span class="language">Azure DevOps Pipeline YAML</span>
+                </div>
+                <textarea rows="20" cols="60" name="description" style="height: 80%; width: 100%; text-align: left; font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace; font-size: 12px; color: #333; font-weight: 400;">
+trigger:
+- master
+variables:
+  buildConfiguration: Release
+jobs:
+- job: Build
+  displayName: Build job
+  pool: 
+    vmImage: ubuntu-latest
+  variables:
+    myJobVariable: 'data'
+  steps: 
+  - script: dotnet build WebApplication1/WebApplication1.Service/WebApplication1.Service.csproj --configuration $(buildConfiguration) 
+    displayName: dotnet build $( myJobVariable )
                 </textarea>
             </div>
-            <div class="col-sm-6">
-                <textarea rows="5" cols="60" name="description">
-                    GitHub Actions yaml
-                </textarea>
+            <div class="col-sm-6" style="height:70vh;">
+                <div class="codeHeader lang-html" data-bi-name="code-header">
+                    <span class="language">GitHub Actions YAML</span>
+                    <button class="action" data-bi-name="copy" onclick="selectElementContentsById('txtActionsYAML')"><svg class="vector-icon" focusable="false" viewBox="0 0 14 14"><path d="M13 6.8V14H4v-3H0V0h5.2l3 3h1L13 6.8zM4 3h2.8l-2-2H1v9h3V3zm8 5H8V4H5v9h7V8zM9 7h2.8L9 4.2V7z"></path></svg> Copy</button>
+                </div>
+                <pre id="txtActionsYAML" style="height: 80%; text-align: left;">
+on:
+  push:
+    branches:
+    - master
+env:
+  buildConfiguration: Release
+jobs:
+  Build:
+    name: Build job
+    runs-on: ubuntu-latest
+    env:
+      myJobVariable: data
+    steps:
+    - uses: actions/checkout@v1
+    - name: dotnet build $myJobVariable
+      run: dotnet build WebApplication1/WebApplication1.Service/WebApplication1.Service.csproj --configuration $buildConfiguration";
+                </pre>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input type="button" value=".NET Core build example" />&nbsp;
+                    <input type="button" value=".NET Core deploy example" />&nbsp;
+                    <br />
+                </div>
             </div>
         </div>
     </div>
+    <br />
     <p>The source code for this project, and it's dependency, is stored here. No YAML is captured in the process of this conversion.</p>
 </div>
