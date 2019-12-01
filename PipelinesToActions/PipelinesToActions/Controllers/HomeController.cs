@@ -29,7 +29,6 @@ namespace PipelinesToActionsWeb.Controllers
             return View(viewName: "Index", model: gitHubResult);
         }
 
-
         [HttpPost]
         public IActionResult Index(string txtAzurePipelinesYAML)
         {
@@ -38,31 +37,39 @@ namespace PipelinesToActionsWeb.Controllers
             {
                 Conversion conversion = new Conversion();
                 gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(txtAzurePipelinesYAML);
+                gitHubResult.pipelinesYaml = txtAzurePipelinesYAML; //TODO: Move this into the Conversion module
             }
             catch (YamlDotNet.Core.YamlException ex)
             {
                 gitHubResult = new ConversionResult
                 {
                     actionsYaml = "Error processing YAML, it's likely the original YAML is not valid" + Environment.NewLine +
-                    "Original error message: " + ex.Message
+                    "Original error message: " + ex.Message,
+                    pipelinesYaml = txtAzurePipelinesYAML
                 };
             }
             catch (Exception ex)
             {
                 gitHubResult = new ConversionResult
                 {
-                    actionsYaml = "Unknown error: " + ex.ToString()
+                    actionsYaml = "Unexpected error: " + ex.ToString(),
+                    pipelinesYaml = txtAzurePipelinesYAML
                 };
             }
 
             //Return the result
             if (gitHubResult != null)
             {
-                return View(model: gitHubResult.actionsYaml);
+                return View(model: gitHubResult);
             }
             else
             {
-                return View(model: "error");
+                gitHubResult = new ConversionResult
+                {
+                    actionsYaml = "Unknown error",
+                    pipelinesYaml = txtAzurePipelinesYAML
+                };
+                return View(model: gitHubResult);
             }
         }
 
