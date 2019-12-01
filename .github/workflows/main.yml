@@ -54,9 +54,11 @@ jobs:
         path: PipelinesToActions/PipelinesToActions/bin/Release/netcoreapp3.0/publish
   
   #Deploy the artifacts to Azure
-  Deploy:
+  deploy:
     runs-on: windows-latest
     needs: build 
+    #Only deploy if running off the master branch - we don't want to deploy off feature branches
+    if: github.ref == 'refs/heads/master'
     
     steps:
     # Login with the secret SP details
