@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PipelinesToActionsWeb.Models;
+using AzurePipelinesToGitHubActionsConverter.Core;
 
 namespace PipelinesToActionsWeb.Controllers
 {
@@ -18,10 +19,22 @@ namespace PipelinesToActionsWeb.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
+
+
+        [HttpPost]
+        public IActionResult Index(string txtAzurePipelinesYAML)
+        {
+            Conversion conversion = new Conversion();
+            GitHubConversion gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(txtAzurePipelinesYAML);
+
+            return View(model: gitHubResult.yaml);
+        }
+
 
         public IActionResult Privacy()
         {
