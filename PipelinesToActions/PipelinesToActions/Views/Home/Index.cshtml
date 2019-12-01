@@ -1,4 +1,4 @@
-﻿@model string
+﻿@model AzurePipelinesToGitHubActionsConverter.Core.ConversionResult
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -18,20 +18,7 @@
                         <span class="language">Azure DevOps Pipeline YAML</span>
                     </div>
                     <textarea rows="20" cols="60" id="txtAzurePipelinesYAML" name="txtAzurePipelinesYAML" style="height: 80%; width: 100%; text-align: left; text-wrap: none; font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace; font-size: 12px; color: #333; font-weight: 400;">
-trigger:
-- master
-variables:
-  buildConfiguration: Release
-jobs:
-- job: Build
-  displayName: Build job
-  pool: 
-    vmImage: ubuntu-latest
-  variables:
-    myJobVariable: 'data'
-  steps: 
-  - script: dotnet build WebApplication1/WebApplication1.Service/WebApplication1.Service.csproj --configuration $(buildConfiguration) 
-    displayName: dotnet build $( myJobVariable )
+@Model.pipelinesYaml
                 </textarea>
                 </div>
                 <div class="col-sm-6" style="height:70vh;">
@@ -40,7 +27,7 @@ jobs:
                         <button class="action" data-bi-name="copy" onclick="selectElementContentsById('txtActionsYAML')"><svg class="vector-icon" focusable="false" viewBox="0 0 14 14"><path d="M13 6.8V14H4v-3H0V0h5.2l3 3h1L13 6.8zM4 3h2.8l-2-2H1v9h3V3zm8 5H8V4H5v9h7V8zM9 7h2.8L9 4.2V7z"></path></svg> Copy</button>
                     </div>
                     <pre id="txtActionsYAML" style="height: 80%; text-align: left;">
-@Model
+@Model.actionsYaml
                     </pre>
                 </div>
                 <div class="row">
@@ -55,9 +42,10 @@ jobs:
         </div>
         <br />
         <p>
+            <b>No YAML is captured or stored</b> in the process of the conversion. <br />
             The source code for this <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverterWeb" target="_blank">website</a>, and it's <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter" target="_blank">dependency</a>, is stored in GitHub and is fully open source.
             <br /><br />
-            <b>No YAML is captured or stored</b> in the process of the conversion. If you run into a bug, please <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter/issues/new?assignees=&labels=&template=bug_report.md&title=" target="_blank">post an issue</a>!
+            If you run into a bug, please <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter/issues/new?assignees=&labels=&template=bug_report.md&title=" target="_blank">post an issue</a>!
         </p>
     </div>
 </form>
