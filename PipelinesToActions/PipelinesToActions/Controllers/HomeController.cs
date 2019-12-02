@@ -321,6 +321,70 @@ stages:
             return View(viewName: "Index", model: gitHubResult);
         }
 
+        [HttpPost]
+        public IActionResult ContainerExample()
+        {
+            string yaml = @"
+pool:
+  vmImage: 'ubuntu-16.04'
+
+strategy:
+  matrix:
+    DotNetCore22:
+      containerImage: mcr.microsoft.com/dotnet/core/sdk:2.2
+    DotNetCore22Nightly:
+      containerImage: mcr.microsoft.com/dotnet/core-nightly/sdk:2.2
+
+container: $[ variables['containerImage'] ]
+
+resources:
+  containers:
+  - container: redis
+    image: redis
+
+services:
+  redis: redis
+
+variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration release'
+
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: test
+    projects: '**/*Tests.csproj'
+    arguments: '--configuration release'
+  env:
+    CONNECTIONSTRINGS_REDIS: redis:6379
+
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    projects: 'MyProject/MyProject.csproj'
+    publishWebProjects: false
+    zipAfterPublish: false
+    arguments: '--configuration release'
+
+- task: PublishPipelineArtifact@0
+  displayName: Store artefact
+  inputs:
+    artifactName: 'MyProject'
+    targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'
+  condition: and(succeeded(), endsWith(variables['Agent.JobName'], 'DotNetCore22'))
+";
+            ConversionResult gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
         public IActionResult Privacy()
         {
             return View();
