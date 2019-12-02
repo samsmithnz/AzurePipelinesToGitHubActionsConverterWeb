@@ -32,20 +32,27 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult Index(string txtAzurePipelinesYAML)
         {
+            ConversionResult gitHubResult = ProcessConversion(txtAzurePipelinesYAML);
+
+            return View(model: gitHubResult);
+        }
+
+        private ConversionResult ProcessConversion(string input)
+        {
+            //process the yaml
             ConversionResult gitHubResult;
             try
             {
                 Conversion conversion = new Conversion();
-                gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(txtAzurePipelinesYAML);
-                gitHubResult.pipelinesYaml = txtAzurePipelinesYAML; //TODO: Move this into the Conversion module
+                gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(input);
             }
             catch (YamlDotNet.Core.YamlException ex)
             {
                 gitHubResult = new ConversionResult
                 {
                     actionsYaml = "Error processing YAML, it's likely the original YAML is not valid" + Environment.NewLine +
-                    "Original error message: " + ex.Message,
-                    pipelinesYaml = txtAzurePipelinesYAML
+                    "Original error message: " + ex.ToString(),
+                    pipelinesYaml = input
                 };
             }
             catch (Exception ex)
@@ -53,23 +60,23 @@ namespace PipelinesToActionsWeb.Controllers
                 gitHubResult = new ConversionResult
                 {
                     actionsYaml = "Unexpected error: " + ex.ToString(),
-                    pipelinesYaml = txtAzurePipelinesYAML
+                    pipelinesYaml = input
                 };
             }
 
             //Return the result
             if (gitHubResult != null)
             {
-                return View(model: gitHubResult);
+                return gitHubResult;
             }
             else
             {
                 gitHubResult = new ConversionResult
                 {
                     actionsYaml = "Unknown error",
-                    pipelinesYaml = txtAzurePipelinesYAML
+                    pipelinesYaml = input
                 };
-                return View(model: gitHubResult);
+                return gitHubResult;
             }
         }
 
@@ -77,45 +84,48 @@ namespace PipelinesToActionsWeb.Controllers
         public IActionResult CIExample()
         {
             string yaml = @"
-name: ""Feature Flags CI""
+trigger:
+- master
 
-on: [push]
+variables:
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
 
-jobs:
-  build:
-
-    runs-on: windows-latest
-      
+stages:
+- stage: Build
+  displayName: 'Build/Test Stage'
+  jobs:
+  - job: Build
+    displayName: 'Build job'
+    pool:
+      vmImage: windows-latest
     steps:
-    # checkout the repo
-    - uses: actions/checkout@v1
-     
-    # install dependencies, build, and test
-    - name: Setup Dotnet for use with actions
-      uses: actions/setup-dotnet@v1.0.0
-    
-    #Build and test service  
-    - name: Run automated unit and integration tests
-      run: dotnet build MyProject/MyProject.Tests/MyProject.Service.csproj --configuration Release
-    - name: Run automated unit and integration tests
-      run: dotnet test MyProject/MyProject.Tests/MyProject.Tests.csproj --configuration Release
 
-    #Publish dotnet objects
-    - name: DotNET Publish Web Service
-      run: dotnet publish MyProject/MyProject.Service/MyProject.Service.csproj --configuration Release 
-    
-    #Publish build artifacts to GitHub
-    - name: Upload web service build artifacts back to GitHub
-      uses: actions/upload-artifact@master
-      with:
-        name: serviceapp
-        path: MyProject/MyProject.Service/bin/Release/netcoreapp3.0/publish
+    - task: DotNetCoreCLI@2
+      displayName: 'Test dotnet code projects'
+      inputs:
+        command: test
+        projects: |
+         FeatureFlags/FeatureFlags.Tests/FeatureFlags.Tests.csproj
+        arguments: --configuration $(buildConfiguration) 
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish dotnet core projects'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: |
+         FeatureFlags/FeatureFlags.Web/FeatureFlags.Web.csproj
+        arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
+        zipAfterPublish: true
+
+    # Publish the artifacts
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
 ";
-
-            ConversionResult gitHubResult = new ConversionResult
-            {
-                actionsYaml = yaml
-            };
+            ConversionResult gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -123,43 +133,56 @@ jobs:
         public IActionResult CDExample()
         {
             string yaml = @"
-name: ""Feature Flags CD""
+trigger:
+- master
 
-on: [push]
+variables:
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
 
-jobs:
-  #Deploy the artifacts to Azure
-  deploy:
-    runs-on: windows-latest
-
-    needs: build
-        
-    steps:        
-    # Login with the secret SP details
-    - name: Log into Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_SP }}  
-    
-    #Download the artifacts from GitHub
-    - name: Download serviceapp artifact
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: serviceapp
-    
-    #Deploy service to Azure staging slots
-    - name: Deploy web service to Azure WebApp
-      uses: Azure/webapps-deploy@v1
-      with:
-        app-name: MyProject-data-eu-service
-        package: serviceapp  
-  
+stages:
+- stage: Deploy
+  displayName: 'Deploy Prod'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - job: Deploy
+    displayName: ""Deploy job""
+    pool:
+      vmImage: ubuntu-latest  
+    variables:
+      AppSettings.Environment: 'data'
+      ArmTemplateResourceGroupLocation: 'eu'
+      ResourceGroupName: 'SamLearnsAzureFeatureFlags'
+      WebsiteName: 'featureflags-data-eu-web'
+      WebServiceName: 'featureflags-data-eu-service'
+    steps:
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download the build artifacts'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(build.artifactstagingdirectory)'
+    - task: AzureRmWebAppDeployment@3
+      displayName: 'Azure App Service Deploy: web site'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: $(WebsiteName)
+        DeployToSlotFlag: true
+        ResourceGroupName: $(ResourceGroupName)
+        SlotName: 'staging'
+        Package: '$(build.artifactstagingdirectory)/drop/FeatureFlags.Web.zip'
+        TakeAppOfflineFlag: true
+        JSONFiles: '**/appsettings.json'        
+    - task: AzureAppServiceManage@0
+      displayName: 'Swap Slots: website'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: $(WebsiteName)
+        ResourceGroupName: $(ResourceGroupName)
+        SourceSlot: 'staging'
 ";
-
-            ConversionResult gitHubResult = new ConversionResult
-            {
-                actionsYaml = yaml
-            };
+            ConversionResult gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -167,137 +190,134 @@ jobs:
         public IActionResult CICDExample()
         {
             string yaml = @"
-name: ""Feature Flags CI/CD""
+trigger:
+- master
+pr:
+  branches:
+    include:
+    - '*'  # must quote since ""*"" is a YAML reserved character; we want a string
 
-on: [push]
+variables:
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
 
-jobs:
-  build:
-
-    runs-on: windows-latest
-   
+stages:
+- stage: Build
+  displayName: 'Build/Test Stage'
+  jobs:
+  - job: Build
+    displayName: 'Build job'
+    pool:
+      vmImage: windows-latest
     steps:
-    # checkout the repo
-    - uses: actions/checkout@v1
-     
-    # install dependencies, build, and test
-    - name: Setup Dotnet for use with actions
-      uses: actions/setup-dotnet@v1.0.0
-     
-    #Build and test service   
-    - name: Run automated unit and integration tests
-      run: dotnet test MyProject/MyProject.Tests/MyProject.Tests.csproj --configuration Release 
 
-    #Publish dotnet objects
-    - name: DotNET Publish Web Service
-      run: dotnet publish MyProject/MyProject.Service/MyProject.Service.csproj --configuration Release 
-    - name: DotNET Publish Web Site
-      run: dotnet publish MyProject/MyProject.Web/MyProject.Web.csproj --configuration Release 
-    - name: DotNET Publish functional tests
-      run: dotnet publish MyProject/MyProject.FunctionalTests/MyProject.FunctionalTests.csproj --configuration Release
-    - name: Copy chromedriver for functional test
-      run: copy ""MyProject/MyProject.FunctionalTests/bin/Release/netcoreapp3.0/chromedriver.exe"" ""MyProject/MyProject.FunctionalTests/bin/Release/netcoreapp3.0/publish""
-      shell: powershell
-    
-    #Publish build artifacts to GitHub
-    - name: Upload web service build artifacts back to GitHub
-      uses: actions/upload-artifact@master
-      with:
-        name: serviceapp
-        path: MyProject/MyProject.Service/bin/Release/netcoreapp3.0/publish
-    - name: Upload website build artifacts back to GitHub
-      uses: actions/upload-artifact@master
-      with:
-        name: webapp
-        path: MyProject/MyProject.Web/bin/Release/netcoreapp3.0/publish
-    - name: Upload function test build artifacts back to GitHub
-      uses: actions/upload-artifact@master
-      with:
-        name: functionaltests
-        path: MyProject/MyProject.FunctionalTests/bin/Release/netcoreapp3.0/publish
+    - task: CopyFiles@2
+      displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)\FeatureFlags\FeatureFlags.ARMTemplates'
+        Contents: '**\*' # **\* = Copy all files and all files in sub directories
+        TargetFolder: '$(build.artifactstagingdirectory)\ARMTemplates'
 
-  #Deploy the artifacts to Azure
-  preDeploy:
-    runs-on: windows-latest
+    - task: DotNetCoreCLI@2
+      displayName: 'Test dotnet code projects'
+      inputs:
+        command: test
+        projects: |
+         FeatureFlags/FeatureFlags.Tests/FeatureFlags.Tests.csproj
+        arguments: --configuration $(buildConfiguration) 
 
-    needs: build
-        
-    steps:        
-    # Login with the secret SP details
-    - name: Log into Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_SP }}  
-    
-    #Download the artifacts from GitHub
-    - name: Download serviceapp artifact
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: serviceapp
-    - name: Download webapp artifact
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: webapp
-    - name: Download functionaltests artifact
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: functionaltests
-    
-    #Deploy service and website to Azure staging slots
-    - name: Deploy web service to Azure WebApp
-      uses: Azure/webapps-deploy@v1
-      with:
-        app-name: MyProject-data-eu-service
-        package: serviceapp
-        slot-name: staging     
-    - name: Deploy website to Azure WebApp
-      uses: Azure/webapps-deploy@v1
-      with:
-        app-name: MyProject-data-eu-web
-        package: webapp
-        slot-name: staging 
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish dotnet core projects'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: |
+         FeatureFlags/FeatureFlags.Web/FeatureFlags.Web.csproj
+        arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
+        zipAfterPublish: true
 
-    # Run functional tests on staging slots     
-    - name: Functional Tests
-      run: |
-        $vsTestConsoleExe = ""C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\Extensions\\TestPlatform\\vstest.console.exe""
-        $targetTestDll = ""functionaltests\MyProject.FunctionalTests.dll""
-        $testRunSettings = ""/Settings:`""functionaltests\test.runsettings`"" ""
-        $parameters = "" -- TestEnvironment=""""Dev""""  ServiceUrl=""""https://MyProject-data-eu-service-staging.azurewebsites.net/"""" WebsiteUrl=""""https://MyProject-data-eu-web-staging.azurewebsites.net/"""" ""
-        #Note that the `"" is an escape character to quote strings, and the `& is needed to start the command
-        $command = ""`& `""$vsTestConsoleExe`"" `""$targetTestDll`"" $testRunSettings $parameters "" 
-        Write-Host ""$command""
-        Invoke-Expression $command
-      shell: powershell
-  
-  #Deploy the artifacts to Azure
-  deploySwapSlots:
-    runs-on: ubuntu-latest # Note, Azure CLI requires a Linux runner...
-    
-    needs: [build, preDeploy]
-    #Only deploy if running off the master branch - we don't want to deploy off feature branches
-    if: github.ref == 'refs/heads/master'
-        
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish dotnet core functional tests project'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: |
+         FeatureFlags/FeatureFlags.FunctionalTests/FeatureFlags.FunctionalTests.csproj
+        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/FunctionalTests'
+        zipAfterPublish: false
+
+    - task: CopyFiles@2
+      displayName: 'Copy Selenium Files to: $(build.artifactstagingdirectory)/FunctionalTests/FeatureFlags.FunctionalTests'
+      inputs:
+        SourceFolder: 'FeatureFlags/FeatureFlags.FunctionalTests/bin/$(buildConfiguration)/netcoreapp3.0'
+        Contents: '*chromedriver.exe*'
+        TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/FeatureFlags.FunctionalTests'
+
+    # Publish the artifacts
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+
+- stage: Deploy
+  displayName: 'Deploy Prod'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - job: Deploy
+    displayName: ""Deploy job""
+    pool:
+      vmImage: ubuntu-latest  
+    variables:
+      AppSettings.Environment: 'data'
+      ArmTemplateResourceGroupLocation: 'eu'
+      ResourceGroupName: 'SamLearnsAzureFeatureFlags'
+      WebsiteName: 'featureflags-data-eu-web'
+      WebServiceName: 'featureflags-data-eu-service'
     steps:
-    # Login with the secret SP details
-    - name: Log into Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_SP }}     
-      #Swap staging slots with prod
-    - name: Swap web service staging slot to production
-      uses: Azure/cli@v1.0.0
-      with:
-        inlineScript: az webapp deployment slot swap --resource-group MyProjectRG --name MyProject-data-eu-service --slot staging --target-slot production
-    - name: Swap web site staging slot to production
-      uses: Azure/cli@v1.0.0
-      with:
-        inlineScript: az webapp deployment slot swap --resource-group MyProjectRG --name MyProject-data-eu-web --slot staging --target-slot production
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download the build artifacts'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(build.artifactstagingdirectory)'
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Deploy ARM Template to resource group'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        resourceGroupName: $(ResourceGroupName)
+        location: '[resourceGroup().location]'
+        csmFile: '$(build.artifactstagingdirectory)/drop/ARMTemplates/azuredeploy.json'
+        csmParametersFile: '$(build.artifactstagingdirectory)/drop/ARMTemplates/azuredeploy.parameters.json'
+        overrideParameters: '-environment $(AppSettings.Environment) -locationShort $(ArmTemplateResourceGroupLocation)'
+    - task: AzureRmWebAppDeployment@3
+      displayName: 'Azure App Service Deploy: web site'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: $(WebsiteName)
+        DeployToSlotFlag: true
+        ResourceGroupName: $(ResourceGroupName)
+        SlotName: 'staging'
+        Package: '$(build.artifactstagingdirectory)/drop/FeatureFlags.Web.zip'
+        TakeAppOfflineFlag: true
+        JSONFiles: '**/appsettings.json'        
+    - task: VSTest@2
+      displayName: 'Run functional smoke tests on website and web service'
+      inputs:
+        searchFolder: '$(build.artifactstagingdirectory)'
+        testAssemblyVer2: |
+          **\FeatureFlags.FunctionalTests\FeatureFlags.FunctionalTests.dll
+        uiTests: true
+        runSettingsFile: '$(build.artifactstagingdirectory)/drop/FunctionalTests/FeatureFlags.FunctionalTests/test.runsettings'
+    - task: AzureAppServiceManage@0
+      displayName: 'Swap Slots: website'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: $(WebsiteName)
+        ResourceGroupName: $(ResourceGroupName)
+        SourceSlot: 'staging'
 ";
-            ConversionResult gitHubResult = new ConversionResult
-            {
-                actionsYaml = yaml
-            };
+            ConversionResult gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
