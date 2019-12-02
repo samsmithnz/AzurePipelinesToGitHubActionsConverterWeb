@@ -32,11 +32,19 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult Index(string txtAzurePipelinesYAML)
         {
+            ConversionResult gitHubResult = ProcessConversion(txtAzurePipelinesYAML);
+
+            return View(model: gitHubResult);
+        }
+
+        private ConversionResult ProcessConversion(string input)
+        {
+            //process the yaml
             ConversionResult gitHubResult;
             try
             {
                 Conversion conversion = new Conversion();
-                gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(txtAzurePipelinesYAML);
+                gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(input);
             }
             catch (YamlDotNet.Core.YamlException ex)
             {
@@ -44,7 +52,7 @@ namespace PipelinesToActionsWeb.Controllers
                 {
                     actionsYaml = "Error processing YAML, it's likely the original YAML is not valid" + Environment.NewLine +
                     "Original error message: " + ex.ToString(),
-                    pipelinesYaml = txtAzurePipelinesYAML
+                    pipelinesYaml = input
                 };
             }
             catch (Exception ex)
@@ -52,23 +60,23 @@ namespace PipelinesToActionsWeb.Controllers
                 gitHubResult = new ConversionResult
                 {
                     actionsYaml = "Unexpected error: " + ex.ToString(),
-                    pipelinesYaml = txtAzurePipelinesYAML
+                    pipelinesYaml = input
                 };
             }
 
             //Return the result
             if (gitHubResult != null)
             {
-                return View(model: gitHubResult);
+                return gitHubResult;
             }
             else
             {
                 gitHubResult = new ConversionResult
                 {
                     actionsYaml = "Unknown error",
-                    pipelinesYaml = txtAzurePipelinesYAML
+                    pipelinesYaml = input
                 };
-                return View(model: gitHubResult);
+                return gitHubResult;
             }
         }
 
@@ -99,7 +107,7 @@ stages:
         command: test
         projects: |
          FeatureFlags/FeatureFlags.Tests/FeatureFlags.Tests.csproj
-        arguments: '--configuration $(buildConfiguration) 
+        arguments: --configuration $(buildConfiguration) 
 
     - task: DotNetCoreCLI@2
       displayName: 'Publish dotnet core projects'
@@ -108,7 +116,7 @@ stages:
         publishWebProjects: false
         projects: |
          FeatureFlags/FeatureFlags.Web/FeatureFlags.Web.csproj
-        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
+        arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
         zipAfterPublish: true
 
     # Publish the artifacts
@@ -117,8 +125,7 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 ";
-            Conversion conversion = new Conversion();
-            ConversionResult gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(yaml);
+            ConversionResult gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -175,8 +182,7 @@ stages:
         ResourceGroupName: $(ResourceGroupName)
         SourceSlot: 'staging'
 ";
-            Conversion conversion = new Conversion();
-            ConversionResult gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(yaml);
+            ConversionResult gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -218,7 +224,7 @@ stages:
         command: test
         projects: |
          FeatureFlags/FeatureFlags.Tests/FeatureFlags.Tests.csproj
-        arguments: '--configuration $(buildConfiguration) 
+        arguments: --configuration $(buildConfiguration) 
 
     - task: DotNetCoreCLI@2
       displayName: 'Publish dotnet core projects'
@@ -227,7 +233,7 @@ stages:
         publishWebProjects: false
         projects: |
          FeatureFlags/FeatureFlags.Web/FeatureFlags.Web.csproj
-        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
+        arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
         zipAfterPublish: true
 
     - task: DotNetCoreCLI@2
@@ -311,8 +317,7 @@ stages:
         ResourceGroupName: $(ResourceGroupName)
         SourceSlot: 'staging'
 ";
-            Conversion conversion = new Conversion();
-            ConversionResult gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(yaml);
+            ConversionResult gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
