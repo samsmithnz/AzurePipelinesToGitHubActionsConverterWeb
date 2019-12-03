@@ -106,7 +106,7 @@ stages:
       inputs:
         command: test
         projects: |
-         FeatureFlags/FeatureFlags.Tests/FeatureFlags.Tests.csproj
+         MyProject/MyProject.Tests/MyProject.Tests.csproj
         arguments: --configuration $(buildConfiguration) 
 
     - task: DotNetCoreCLI@2
@@ -115,7 +115,7 @@ stages:
         command: publish
         publishWebProjects: false
         projects: |
-         FeatureFlags/FeatureFlags.Web/FeatureFlags.Web.csproj
+         MyProject/MyProject.Web/MyProject.Web.csproj
         arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
         zipAfterPublish: true
 
@@ -152,9 +152,8 @@ stages:
     variables:
       AppSettings.Environment: 'data'
       ArmTemplateResourceGroupLocation: 'eu'
-      ResourceGroupName: 'SamLearnsAzureFeatureFlags'
-      WebsiteName: 'featureflags-data-eu-web'
-      WebServiceName: 'featureflags-data-eu-service'
+      ResourceGroupName: 'MyProjectRG'
+      WebsiteName: 'myproject-web'
     steps:
     - task: DownloadBuildArtifacts@0
       displayName: 'Download the build artifacts'
@@ -166,18 +165,18 @@ stages:
     - task: AzureRmWebAppDeployment@3
       displayName: 'Azure App Service Deploy: web site'
       inputs:
-        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        azureSubscription: 'connection to Azure Portal'
         WebAppName: $(WebsiteName)
         DeployToSlotFlag: true
         ResourceGroupName: $(ResourceGroupName)
         SlotName: 'staging'
-        Package: '$(build.artifactstagingdirectory)/drop/FeatureFlags.Web.zip'
+        Package: '$(build.artifactstagingdirectory)/drop/MyProject.Web.zip'
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'        
     - task: AzureAppServiceManage@0
       displayName: 'Swap Slots: website'
       inputs:
-        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        azureSubscription: 'connection to Azure Portal'
         WebAppName: $(WebsiteName)
         ResourceGroupName: $(ResourceGroupName)
         SourceSlot: 'staging'
@@ -214,7 +213,7 @@ stages:
     - task: CopyFiles@2
       displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
       inputs:
-        SourceFolder: '$(system.defaultworkingdirectory)\FeatureFlags\FeatureFlags.ARMTemplates'
+        SourceFolder: '$(system.defaultworkingdirectory)\MyProject\MyProject.ARMTemplates'
         Contents: '**\*' # **\* = Copy all files and all files in sub directories
         TargetFolder: '$(build.artifactstagingdirectory)\ARMTemplates'
 
@@ -223,7 +222,7 @@ stages:
       inputs:
         command: test
         projects: |
-         FeatureFlags/FeatureFlags.Tests/FeatureFlags.Tests.csproj
+         MyProject/MyProject.Tests/MyProject.Tests.csproj
         arguments: --configuration $(buildConfiguration) 
 
     - task: DotNetCoreCLI@2
@@ -232,7 +231,7 @@ stages:
         command: publish
         publishWebProjects: false
         projects: |
-         FeatureFlags/FeatureFlags.Web/FeatureFlags.Web.csproj
+         MyProject/MyProject.Web/MyProject.Web.csproj
         arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
         zipAfterPublish: true
 
@@ -242,16 +241,16 @@ stages:
         command: publish
         publishWebProjects: false
         projects: |
-         FeatureFlags/FeatureFlags.FunctionalTests/FeatureFlags.FunctionalTests.csproj
+         MyProject/MyProject.FunctionalTests/MyProject.FunctionalTests.csproj
         arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/FunctionalTests'
         zipAfterPublish: false
 
     - task: CopyFiles@2
-      displayName: 'Copy Selenium Files to: $(build.artifactstagingdirectory)/FunctionalTests/FeatureFlags.FunctionalTests'
+      displayName: 'Copy Selenium Files to: $(build.artifactstagingdirectory)/FunctionalTests/MyProject.FunctionalTests'
       inputs:
-        SourceFolder: 'FeatureFlags/FeatureFlags.FunctionalTests/bin/$(buildConfiguration)/netcoreapp3.0'
+        SourceFolder: 'MyProject/MyProject.FunctionalTests/bin/$(buildConfiguration)/netcoreapp3.0'
         Contents: '*chromedriver.exe*'
-        TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/FeatureFlags.FunctionalTests'
+        TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/MyProject.FunctionalTests'
 
     # Publish the artifacts
     - task: PublishBuildArtifacts@1
@@ -270,9 +269,8 @@ stages:
     variables:
       AppSettings.Environment: 'data'
       ArmTemplateResourceGroupLocation: 'eu'
-      ResourceGroupName: 'SamLearnsAzureFeatureFlags'
-      WebsiteName: 'featureflags-data-eu-web'
-      WebServiceName: 'featureflags-data-eu-service'
+      ResourceGroupName: 'MyProjectRG'
+      WebsiteName: 'myproject-web'
     steps:
     - task: DownloadBuildArtifacts@0
       displayName: 'Download the build artifacts'
@@ -284,7 +282,7 @@ stages:
     - task: AzureResourceGroupDeployment@2
       displayName: 'Deploy ARM Template to resource group'
       inputs:
-        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        azureSubscription: 'connection to Azure Portal'
         resourceGroupName: $(ResourceGroupName)
         location: '[resourceGroup().location]'
         csmFile: '$(build.artifactstagingdirectory)/drop/ARMTemplates/azuredeploy.json'
@@ -293,26 +291,26 @@ stages:
     - task: AzureRmWebAppDeployment@3
       displayName: 'Azure App Service Deploy: web site'
       inputs:
-        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        azureSubscription: 'connection to Azure Portal'
         WebAppName: $(WebsiteName)
         DeployToSlotFlag: true
         ResourceGroupName: $(ResourceGroupName)
         SlotName: 'staging'
-        Package: '$(build.artifactstagingdirectory)/drop/FeatureFlags.Web.zip'
+        Package: '$(build.artifactstagingdirectory)/drop/MyProject.Web.zip'
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'        
     - task: VSTest@2
-      displayName: 'Run functional smoke tests on website and web service'
+      displayName: 'Run functional smoke tests on website'
       inputs:
         searchFolder: '$(build.artifactstagingdirectory)'
         testAssemblyVer2: |
-          **\FeatureFlags.FunctionalTests\FeatureFlags.FunctionalTests.dll
+          **\MyProject.FunctionalTests\MyProject.FunctionalTests.dll
         uiTests: true
-        runSettingsFile: '$(build.artifactstagingdirectory)/drop/FunctionalTests/FeatureFlags.FunctionalTests/test.runsettings'
+        runSettingsFile: '$(build.artifactstagingdirectory)/drop/FunctionalTests/MyProject.FunctionalTests/test.runsettings'
     - task: AzureAppServiceManage@0
       displayName: 'Swap Slots: website'
       inputs:
-        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        azureSubscription: 'connection to Azure Portal'
         WebAppName: $(WebsiteName)
         ResourceGroupName: $(ResourceGroupName)
         SourceSlot: 'staging'
@@ -375,7 +373,7 @@ steps:
     arguments: '--configuration release'
 
 - task: PublishPipelineArtifact@0
-  displayName: Store artefact
+  displayName: Store artifact
   inputs:
     artifactName: 'MyProject'
     targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'
