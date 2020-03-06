@@ -1,4 +1,6 @@
-﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+﻿@using System.Reflection;
+@using System.IO;
+@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +41,22 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; @DateTime.Now.Year - PipelinesToActions - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            @{
+                //Last build time
+                const int peHeaderOffset = 60;
+                const int linkerTimestampOffset = 8;
+                byte[] bytes = new byte[2048];
+                using (FileStream file = new FileStream(Assembly.GetEntryAssembly()?.Location ?? "", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    file.Read(bytes, 0, bytes.Length);
+                }
+                Int32 headerPos = BitConverter.ToInt32(bytes, peHeaderOffset);
+                Int32 secondsSince1970 = BitConverter.ToInt32(bytes, headerPos + linkerTimestampOffset);
+                DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                string appAssemblyLastBuildDate = dt.AddSeconds(secondsSince1970).ToString("dd-MMM-yyyy hh:mm:sstt");
+
+            }
+            &copy; @DateTime.Now.Year - Pipelines To Actions - (Last built: @appAssemblyLastBuildDate) - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
