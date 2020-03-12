@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AzurePipelinesToGitHubActionsConverter.Core" Version="0.8.5.737441002" />
+    <PackageReference Include="AzurePipelinesToGitHubActionsConverter.Core" Version="0.8.6.737528091" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
   </ItemGroup>
 
