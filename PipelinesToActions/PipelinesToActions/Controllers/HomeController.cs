@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AzurePipelinesToGitHubActionsConverter.Core.Conversion;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PipelinesToActionsWeb.Models;
-using AzurePipelinesToGitHubActionsConverter.Core;
+using System;
+using System.Diagnostics;
 
 namespace PipelinesToActionsWeb.Controllers
 {
@@ -25,22 +22,22 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            ConversionResult gitHubResult = new ConversionResult();
+            ConversionResponse gitHubResult = new ConversionResponse();
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpPost]
         public IActionResult Index(string txtAzurePipelinesYAML)
         {
-            ConversionResult gitHubResult = ProcessConversion(txtAzurePipelinesYAML);
+            ConversionResponse gitHubResult = ProcessConversion(txtAzurePipelinesYAML);
 
             return View(model: gitHubResult);
         }
 
-        private ConversionResult ProcessConversion(string input)
+        private ConversionResponse ProcessConversion(string input)
         {
             //process the yaml
-            ConversionResult gitHubResult;
+            ConversionResponse gitHubResult;
             try
             {
                 Conversion conversion = new Conversion();
@@ -48,7 +45,7 @@ namespace PipelinesToActionsWeb.Controllers
             }
             catch (YamlDotNet.Core.YamlException ex)
             {
-                gitHubResult = new ConversionResult
+                gitHubResult = new ConversionResponse
                 {
                     actionsYaml = "Error processing YAML, it's likely the original YAML is not valid" + Environment.NewLine +
                     "Original error message: " + ex.ToString(),
@@ -57,7 +54,7 @@ namespace PipelinesToActionsWeb.Controllers
             }
             catch (Exception ex)
             {
-                gitHubResult = new ConversionResult
+                gitHubResult = new ConversionResponse
                 {
                     actionsYaml = "Unexpected error: " + ex.ToString(),
                     pipelinesYaml = input
@@ -71,7 +68,7 @@ namespace PipelinesToActionsWeb.Controllers
             }
             else
             {
-                gitHubResult = new ConversionResult
+                gitHubResult = new ConversionResponse
                 {
                     actionsYaml = "Unknown error",
                     pipelinesYaml = input
@@ -85,7 +82,7 @@ namespace PipelinesToActionsWeb.Controllers
         public IActionResult CIExample()
         {
             string yaml = Samples.CISample();
-            ConversionResult gitHubResult = ProcessConversion(yaml);
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -94,7 +91,7 @@ namespace PipelinesToActionsWeb.Controllers
         public IActionResult CDExample()
         {
             string yaml = Samples.CDSample();
-            ConversionResult gitHubResult = ProcessConversion(yaml);
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -103,7 +100,7 @@ namespace PipelinesToActionsWeb.Controllers
         public IActionResult CICDExample()
         {
 
-            string yaml = Samples.CICDSample(); ConversionResult gitHubResult = ProcessConversion(yaml);
+            string yaml = Samples.CICDSample(); ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -112,7 +109,7 @@ namespace PipelinesToActionsWeb.Controllers
         public IActionResult ContainerExample()
         {
             string yaml = Samples.ContainerSample();
-            ConversionResult gitHubResult = ProcessConversion(yaml);
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
