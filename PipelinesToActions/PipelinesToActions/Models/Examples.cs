@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace PipelinesToActionsWeb.Models
 {
-    public class Samples
+    public class Examples
     {
-        public static string CISample()
+        public static string CIExample()
         {
             string yaml = @"
 trigger:
@@ -54,7 +54,7 @@ stages:
             return yaml;
         }
 
-        public static string CDSample()
+        public static string CDExample()
         {
             string yaml = @"
 trigger:
@@ -108,7 +108,7 @@ stages:
             return yaml;
         }
 
-        public static string CICDSample()
+        public static string CICDExample()
         {
             string yaml = @"
 trigger:
@@ -240,7 +240,7 @@ stages:
             return yaml;
         }
 
-        public static string ContainerSample()
+        public static string ContainerExample()
         {
             string yaml = @"
 pool:
@@ -298,6 +298,236 @@ steps:
     artifactName: 'MyProject'
     targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'
   condition: and(succeeded(), endsWith(variables['Agent.JobName'], 'DotNetCore22'))
+";
+            return yaml;
+        }
+
+        //https://github.com/microsoft/azure-pipelines-yaml/blob/master/templates/.net-desktop.yml
+        public static string DotNetDeskTopExample()
+        {
+            string yaml = @"
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+";
+            return yaml;
+        }
+
+        //https://github.com/microsoft/azure-pipelines-yaml/blob/master/templates/android.yml
+        public static string GradleExample()
+        {
+            string yaml = @"
+# Android
+# Build your Android project with Gradle.
+# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+
+trigger:
+- master
+
+pool:
+  vmImage: 'macos-latest'
+
+steps:
+- task: Gradle@2
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    testResultsFiles: '**/TEST-*.xml'
+    tasks: 'assembleDebug'
+";
+            return yaml;
+        }
+
+        //https://github.com/microsoft/azure-pipelines-yaml/blob/master/templates/asp.net-core.yml
+        public static string ASPDotNetCoreSimpleExample()
+        {
+            string yaml = @"
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(buildConfiguration)'
+";
+            return yaml;
+        }
+
+        //https://github.com/microsoft/azure-pipelines-yaml/blob/master/templates/ant.yml
+        public static string AntExample()
+        {
+            string yaml = @"
+# Ant
+# Build your Java projects and run tests with Apache Ant.
+# Add steps that save build artifacts and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Ant@1
+  inputs:
+    workingDirectory: ''
+    buildFile: 'build.xml'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    jdkArchitectureOption: 'x64'
+";
+            return yaml;
+        }
+
+        //https://github.com/microsoft/azure-pipelines-yaml/blob/master/templates/docker-build.yml
+        public static string DockerBuildExample()
+        {
+            string yaml = @"
+# Docker
+# Build a Docker image 
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      displayName: Build an image
+      inputs:
+        command: build
+        dockerfile: '{{ dockerfilePath }}'
+        tags: |
+          $(tag)
+";
+            return yaml;
+        }
+
+        public static string DotNetDesktopExample()
+        {
+            string yaml = @"
+DotNetDesktopExample Coming soon
+";
+            return yaml;
+        }
+
+        public static string ASPDotNetFrameworkExample()
+        {
+            string yaml = @"
+ASPDotNetFrameworkExample Coming soon
+";
+            return yaml;
+        }
+
+        public static string NodeExample()
+        {
+            string yaml = @"
+NodeExample Coming soon
+";
+            return yaml;
+        }
+
+        public static string MavenExample()
+        {
+            string yaml = @"
+MavenExample Coming soon
+";
+            return yaml;
+        }
+
+        public static string PythonExample()
+        {
+            string yaml = @"
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+strategy:
+  matrix:
+    Python35:
+      PYTHON_VERSION: '3.5'
+    Python36:
+      PYTHON_VERSION: '3.6'
+    Python37:
+      PYTHON_VERSION: '3.7'
+  maxParallel: 3
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(PYTHON_VERSION)'
+    addToPath: true
+    architecture: 'x64'
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'filePath'
+    scriptPath: 'Python/Hello.py'
+";
+            return yaml;
+        }
+
+        public static string RubyExample()
+        {
+            string yaml = @"
+RubyExample Coming soon
 ";
             return yaml;
         }

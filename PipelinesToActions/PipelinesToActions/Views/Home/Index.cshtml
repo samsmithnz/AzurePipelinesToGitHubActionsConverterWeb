@@ -35,20 +35,36 @@
             </div>
             <br />
             <div class="row">
-                <div class="col-sm-12">
-                    <p>Load some samples:</p>
+                <div class="col-sm-12" style="margin-bottom: 8px">
+                    <p><b>Try some other samples:</b></p>
+                    @*<button asp-controller="home" asp-action="ASPDotNetCoreSimpleExample">ASP.NET Core example</button>&nbsp;
+                        <button asp-controller="home" asp-action="DotNetDesktopExample">.NET Desktop example</button>&nbsp;
+                        <button asp-controller="home" asp-action="ASPDotNetFrameworkExample">ASP.NET Framework example</button>&nbsp;
+                        <button asp-controller="home" asp-action="NodeExample">NodeJS example</button>&nbsp;*@
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" style="margin-bottom: 8px">
                     <button asp-controller="home" asp-action="CIExample">.NET Core CI example</button>&nbsp;
                     <button asp-controller="home" asp-action="CDExample">.NET Core CD example</button>&nbsp;
                     <button asp-controller="home" asp-action="CICDExample">.NET Core CI/CD example</button>&nbsp;
                     <button asp-controller="home" asp-action="ContainerExample">Container CI/CD example (WIP)</button>&nbsp;
-                    <br />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" style="margin-bottom: 8px">
+                    <button asp-controller="home" asp-action="AntExample">Ant example</button>&nbsp;
+                    @*<button asp-controller="home" asp-action="GradleExample">Android Gradle example</button>&nbsp;
+                        <button asp-controller="home" asp-action="MavenExample">Maven example</button>&nbsp;*@
+                    <button asp-controller="home" asp-action="PythonExample">Python example</button>&nbsp;
+                    @*<button asp-controller="home" asp-action="RubyExample">Ruby example</button>*@&nbsp;
+                    (More samples coming soon)
                 </div>
             </div>
         </div>
-        <br />
         <p>
             <b>No YAML is captured or stored</b> in the process of the conversion. <br />
-            The source code for this <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverterWeb" target="_blank">website</a>, and it's <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter" target="_blank">dependency</a>, is stored in GitHub and is fully open source.
+            The source code for this <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverterWeb" target="_blank">website</a>, and it's <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter" target="_blank">core processing</a>, is stored in GitHub and is fully open source.
             <br /><br />
             If you run into a bug, please <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter/issues/new?assignees=&labels=&template=bug_report.md&title=" target="_blank">post an issue</a>!
         </p>
