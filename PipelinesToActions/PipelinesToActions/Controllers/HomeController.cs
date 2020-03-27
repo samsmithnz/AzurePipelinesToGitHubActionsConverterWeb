@@ -77,11 +77,50 @@ namespace PipelinesToActionsWeb.Controllers
             }
         }
 
+
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult ASPDotNetCoreSimpleExample()
+        {
+            string yaml = Examples.ASPDotNetCoreSimpleExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult DotNetDesktopExample()
+        {
+            string yaml = Examples.DotNetDesktopExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult ASPDotNetFrameworkExample()
+        {
+            string yaml = Examples.ASPDotNetFrameworkExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult NodeExample()
+        {
+            string yaml = Examples.NodeExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+
         [HttpGet]
         [HttpPost]
         public IActionResult CIExample()
         {
-            string yaml = Samples.CISample();
+            string yaml = Examples.CIExample();
             ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
@@ -90,7 +129,7 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult CDExample()
         {
-            string yaml = Samples.CDSample();
+            string yaml = Examples.CDExample();
             ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
@@ -99,8 +138,8 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult CICDExample()
         {
-
-            string yaml = Samples.CICDSample(); ConversionResponse gitHubResult = ProcessConversion(yaml);
+           string yaml = Examples.CICDExample(); 
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
 
@@ -108,7 +147,52 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult ContainerExample()
         {
-            string yaml = Samples.ContainerSample();
+            string yaml = Examples.ContainerExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult AntExample()
+        {
+            string yaml = Examples.AntExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult GradleExample()
+        {
+            string yaml = Examples.GradleExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult MavenExample()
+        {
+            string yaml = Examples.MavenExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult PythonExample()
+        {
+            string yaml = Examples.PythonExample();
+            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            return View(viewName: "Index", model: gitHubResult);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult RubyExample()
+        {
+            string yaml = Examples.RubyExample();
             ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
