@@ -36,6 +36,8 @@ namespace PipelinesToActionsWeb.Controllers
 
         private ConversionResponse ProcessConversion(string input)
         {
+            input = input.TrimStart().TrimEnd();
+
             //process the yaml
             ConversionResponse gitHubResult;
             try
