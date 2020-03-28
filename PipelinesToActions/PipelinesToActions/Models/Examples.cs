@@ -511,7 +511,7 @@ pool:
 steps:
 - task: Maven@3
   inputs:
-    mavenPomFile: 'Maven/pom.xml'
+    mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.8'
@@ -550,7 +550,7 @@ steps:
 - task: PythonScript@0
   inputs:
     scriptSource: 'filePath'
-    scriptPath: 'Python/Hello.py'
+    scriptPath: 'Hello.py'
 ";
             return yaml;
         }

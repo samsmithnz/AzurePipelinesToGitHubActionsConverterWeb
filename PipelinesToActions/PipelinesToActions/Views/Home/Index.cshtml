@@ -9,7 +9,7 @@
             Paste your Azure Pipelines YAML into the left textbox, <br />
             then press the "Process YAML" button to generate GitHub Actions YAML
         </h4>
-        <span>This migration has approximately ~95% accuracy, depending on the YAML. For items unable to be migrated, a "#NOTE:" comment is added to the results</span>
+        <span>This migration has approximately ~90% accuracy, depending on the YAML tasks, but 99% for structure. <br />For items unable to be migrated, a "#NOTE:" comment is added to the results</span>
         <div class="container">
             <div class="row">
                 <div class="col-sm-6" style="height:65vh;">
@@ -36,15 +36,7 @@
             <br />
             <div class="row">
                 <div class="col-sm-12" style="margin-bottom: 8px">
-                    <p><b>Try some other samples:</b></p>
-                    @*<button asp-controller="home" asp-action="ASPDotNetCoreSimpleExample">ASP.NET Core example</button>&nbsp;
-                        <button asp-controller="home" asp-action="DotNetDesktopExample">.NET Desktop example</button>&nbsp;
-                        <button asp-controller="home" asp-action="ASPDotNetFrameworkExample">ASP.NET Framework example</button>&nbsp;*@
-
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12" style="margin-bottom: 8px">
+                    <p><b>Try some samples:</b></p>
                     <button asp-controller="home" asp-action="CIExample">.NET Core CI example</button>&nbsp;
                     <button asp-controller="home" asp-action="CDExample">.NET Core CD example</button>&nbsp;
                     <button asp-controller="home" asp-action="CICDExample">.NET Core CI/CD example</button>&nbsp;
@@ -53,9 +45,17 @@
             </div>
             <div class="row">
                 <div class="col-sm-12" style="margin-bottom: 8px">
+                    @*<button asp-controller="home" asp-action="ASPDotNetCoreSimpleExample">ASP.NET Core example</button>&nbsp;
+        <button asp-controller="home" asp-action="DotNetDesktopExample">.NET Desktop example</button>&nbsp;
+        <button asp-controller="home" asp-action="ASPDotNetFrameworkExample">ASP.NET Framework example</button>&nbsp;*@
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" style="margin-bottom: 8px">
                     <button asp-controller="home" asp-action="AntExample">Ant example</button>&nbsp;
-                    @*<button asp-controller="home" asp-action="GradleExample">Android Gradle example</button>&nbsp;
-                        <button asp-controller="home" asp-action="MavenExample">Maven example</button>&nbsp;*@
+                    @*<button asp-controller="home" asp-action="GradleExample">Android Gradle example</button>&nbsp;*@
+                    <button asp-controller="home" asp-action="MavenExample">Maven example</button>&nbsp;
                     <button asp-controller="home" asp-action="NodeExample">NodeJS example</button>&nbsp;
                     <button asp-controller="home" asp-action="PythonExample">Python example</button>&nbsp;
                     @*<button asp-controller="home" asp-action="RubyExample">Ruby example</button>*@&nbsp;
