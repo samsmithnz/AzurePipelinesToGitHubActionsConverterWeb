@@ -479,7 +479,22 @@ ASPDotNetFrameworkExample Coming soon
         public static string NodeExample()
         {
             string yaml = @"
-NodeExample Coming soon
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    npm start
+  displayName: 'npm install and start'
 ";
             return yaml;
         }
