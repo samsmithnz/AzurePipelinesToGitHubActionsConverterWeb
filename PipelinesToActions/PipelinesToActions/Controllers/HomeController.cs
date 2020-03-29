@@ -92,9 +92,9 @@ namespace PipelinesToActionsWeb.Controllers
 
         [HttpGet]
         [HttpPost]
-        public IActionResult DotNetDesktopExample()
+        public IActionResult DotNetFrameworkDesktopExample()
         {
-            string yaml = Examples.DotNetDesktopExample();
+            string yaml = Examples.DotNetFrameworkDesktopExample();
             ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
