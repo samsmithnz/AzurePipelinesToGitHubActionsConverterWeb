@@ -303,7 +303,7 @@ steps:
         }
 
         //https://github.com/microsoft/azure-pipelines-yaml/blob/master/templates/.net-desktop.yml
-        public static string DotNetDeskTopExample()
+        public static string DotNetFrameworkDesktopExample()
         {
             string yaml = @"
 # .NET Desktop
@@ -318,7 +318,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  solution: '**/MyProject.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -332,11 +332,6 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 ";
@@ -456,14 +451,6 @@ stages:
         dockerfile: '{{ dockerfilePath }}'
         tags: |
           $(tag)
-";
-            return yaml;
-        }
-
-        public static string DotNetDesktopExample()
-        {
-            string yaml = @"
-DotNetDesktopExample Coming soon
 ";
             return yaml;
         }

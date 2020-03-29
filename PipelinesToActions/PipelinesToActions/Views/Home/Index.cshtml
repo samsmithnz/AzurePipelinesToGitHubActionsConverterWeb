@@ -12,18 +12,18 @@
         <span>This migration has approximately ~90% accuracy, depending on the YAML tasks, but 99% for structure. <br />For items unable to be migrated, a "#NOTE:" comment is added to the results</span>
         <div class="container">
             <div class="row">
-                <div class="col-sm-6" style="height:65vh;">
+                <div class="col-sm-6" style="height:60vh;">
                     <div class="codeHeader lang-html" data-bi-name="code-header">
                         <span class="language">Azure DevOps Pipeline YAML</span>
                     </div>
-                    <textarea rows="20" cols="60" id="txtAzurePipelinesYAML" name="txtAzurePipelinesYAML" style="height: 80%; width: 100%; text-align: left; white-space: nowrap; overflow: auto; font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace; font-size: 12px; color: #333; font-weight: 400;">@Model.pipelinesYaml</textarea>
+                    <textarea rows="20" cols="60" id="txtAzurePipelinesYAML" name="txtAzurePipelinesYAML" style="height: 90%; width: 100%; text-align: left; white-space: nowrap; overflow: auto; font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace; font-size: 12px; color: #333; font-weight: 400;">@Model.pipelinesYaml</textarea>
                 </div>
-                <div class="col-sm-6" style="height:65vh;">
+                <div class="col-sm-6" style="height:60vh;">
                     <div class="codeHeader lang-html" data-bi-name="code-header">
                         <span class="language">GitHub Actions YAML</span>
                         <button class="action" data-bi-name="copy" onclick="selectElementContentsById('txtActionsYAML')"><svg class="vector-icon" focusable="false" viewBox="0 0 14 14"><path d="M13 6.8V14H4v-3H0V0h5.2l3 3h1L13 6.8zM4 3h2.8l-2-2H1v9h3V3zm8 5H8V4H5v9h7V8zM9 7h2.8L9 4.2V7z"></path></svg> Copy</button>
                     </div>
-                    <pre id="txtActionsYAML" style="height: 80%; text-align: left;">
+                    <pre id="txtActionsYAML" style="height: 90%; text-align: left;">
 @Model.actionsYaml
                     </pre>
                 </div>
@@ -40,13 +40,13 @@
                     <button asp-controller="home" asp-action="CIExample">.NET Core CI example</button>&nbsp;
                     <button asp-controller="home" asp-action="CDExample">.NET Core CD example</button>&nbsp;
                     <button asp-controller="home" asp-action="CICDExample">.NET Core CI/CD example</button>&nbsp;
+                    <button asp-controller="home" asp-action="DotNetFrameworkDesktopExample">.NET Framework Desktop example</button>&nbsp;
                     <button asp-controller="home" asp-action="ContainerExample">Container CI/CD example (WIP)</button>&nbsp;
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12" style="margin-bottom: 8px">
-                    @*<button asp-controller="home" asp-action="ASPDotNetCoreSimpleExample">ASP.NET Core example</button>&nbsp;
-        <button asp-controller="home" asp-action="DotNetDesktopExample">.NET Desktop example</button>&nbsp;
+                    @*<button asp-controller="home" asp-action="ASPDotNetCoreSimpleExample">ASP.NET Core example</button>&nbsp;       
         <button asp-controller="home" asp-action="ASPDotNetFrameworkExample">ASP.NET Framework example</button>&nbsp;*@
 
                 </div>

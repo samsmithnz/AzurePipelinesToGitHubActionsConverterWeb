@@ -36,7 +36,10 @@ namespace PipelinesToActionsWeb.Controllers
 
         private ConversionResponse ProcessConversion(string input)
         {
-            input = input.TrimStart().TrimEnd();
+            if (string.IsNullOrEmpty(input) == false)
+            {
+                input = input.TrimStart().TrimEnd();
+            }
 
             //process the yaml
             ConversionResponse gitHubResult;
@@ -92,9 +95,9 @@ namespace PipelinesToActionsWeb.Controllers
 
         [HttpGet]
         [HttpPost]
-        public IActionResult DotNetDesktopExample()
+        public IActionResult DotNetFrameworkDesktopExample()
         {
-            string yaml = Examples.DotNetDesktopExample();
+            string yaml = Examples.DotNetFrameworkDesktopExample();
             ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
@@ -140,7 +143,7 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult CICDExample()
         {
-           string yaml = Examples.CICDExample(); 
+            string yaml = Examples.CICDExample();
             ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
