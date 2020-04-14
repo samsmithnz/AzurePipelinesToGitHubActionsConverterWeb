@@ -535,7 +535,17 @@ steps:
         public static string RubyExample()
         {
             string yaml = @"
-RubyExample Coming soon
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseRubyVersion@0
+  inputs:
+    versionSpec: '>= 2.5'
+- script: ruby HelloWorld.rb
 ";
             return yaml;
         }
