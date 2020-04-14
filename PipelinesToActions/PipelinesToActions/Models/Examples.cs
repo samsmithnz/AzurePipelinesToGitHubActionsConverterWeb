@@ -17,39 +17,32 @@ variables:
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
 
-stages:
-- stage: Build
-  displayName: 'Build/Test Stage'
-  jobs:
-  - job: Build
-    displayName: 'Build job'
-    pool:
-      vmImage: windows-latest
-    steps:
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Test dotnet code projects'
-      inputs:
-        command: test
-        projects: |
-         MyProject/MyProject.Tests/MyProject.Tests.csproj
-        arguments: --configuration $(buildConfiguration) 
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish dotnet core projects'
-      inputs:
-        command: publish
-        publishWebProjects: false
-        projects: |
-         MyProject/MyProject.Web/MyProject.Web.csproj
-        arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
-        zipAfterPublish: true
-
-    # Publish the artifacts
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact'
-      inputs:
-        PathtoPublish: '$(build.artifactstagingdirectory)'
+jobs:
+- job: Build
+  displayName: 'Build job'
+  pool:
+    vmImage: windows-latest
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'Test dotnet code projects'
+    inputs:
+      command: test
+      projects: |
+       MyProject/MyProject.Tests/MyProject.Tests.csproj
+      arguments: --configuration $(buildConfiguration) 
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish dotnet core projects'
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: |
+        MyProject/MyProject.Web/MyProject.Web.csproj
+      arguments: --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) 
+      zipAfterPublish: true
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
 ";
             return yaml;
         }
@@ -64,46 +57,43 @@ variables:
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
 
-stages:
-- stage: Deploy
-  displayName: 'Deploy Prod'
+jobs:
+- job: Deploy
+  displayName: ""Deploy job""
+  pool:
+    vmImage: ubuntu-latest
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  jobs:
-  - job: Deploy
-    displayName: ""Deploy job""
-    pool:
-      vmImage: ubuntu-latest  
-    variables:
-      AppSettings.Environment: 'data'
-      ArmTemplateResourceGroupLocation: 'eu'
-      ResourceGroupName: 'MyProjectRG'
-      WebsiteName: 'myproject-web'
-    steps:
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download the build artifacts'
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'drop'
-        downloadPath: '$(build.artifactstagingdirectory)'
-    - task: AzureRmWebAppDeployment@3
-      displayName: 'Azure App Service Deploy: web site'
-      inputs:
-        azureSubscription: 'connection to Azure Portal'
-        WebAppName: $(WebsiteName)
-        DeployToSlotFlag: true
-        ResourceGroupName: $(ResourceGroupName)
-        SlotName: 'staging'
-        Package: '$(build.artifactstagingdirectory)/drop/MyProject.Web.zip'
-        TakeAppOfflineFlag: true
-        JSONFiles: '**/appsettings.json'        
-    - task: AzureAppServiceManage@0
-      displayName: 'Swap Slots: website'
-      inputs:
-        azureSubscription: 'connection to Azure Portal'
-        WebAppName: $(WebsiteName)
-        ResourceGroupName: $(ResourceGroupName)
-        SourceSlot: 'staging'
+  variables:
+    AppSettings.Environment: 'data'
+    ArmTemplateResourceGroupLocation: 'eu'
+    ResourceGroupName: 'MyProjectRG'
+    WebsiteName: 'myproject-web'
+  steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download the build artifacts'
+    inputs:
+      buildType: 'current'
+      downloadType: 'single'
+      artifactName: 'drop'
+      downloadPath: '$(build.artifactstagingdirectory)'
+  - task: AzureRmWebAppDeployment@3
+    displayName: 'Azure App Service Deploy: web site'
+    inputs:
+      azureSubscription: 'connection to Azure Portal'
+      WebAppName: $(WebsiteName)
+      DeployToSlotFlag: true
+      ResourceGroupName: $(ResourceGroupName)
+      SlotName: 'staging'
+      Package: '$(build.artifactstagingdirectory)/drop/MyProject.Web.zip'
+      TakeAppOfflineFlag: true
+      JSONFiles: '**/appsettings.json'        
+  - task: AzureAppServiceManage@0
+    displayName: 'Swap Slots: website'
+    inputs:
+      azureSubscription: 'connection to Azure Portal'
+      WebAppName: $(WebsiteName)
+      ResourceGroupName: $(ResourceGroupName)
+      SourceSlot: 'staging'
 ";
             return yaml;
         }
@@ -545,7 +535,17 @@ steps:
         public static string RubyExample()
         {
             string yaml = @"
-RubyExample Coming soon
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseRubyVersion@0
+  inputs:
+    versionSpec: '>= 2.5'
+- script: ruby HelloWorld.rb
 ";
             return yaml;
         }

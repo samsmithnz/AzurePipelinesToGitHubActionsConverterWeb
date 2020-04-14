@@ -9,7 +9,7 @@
             Paste your Azure Pipelines YAML into the left textbox, <br />
             then use the "Process YAML" button to generate GitHub Actions YAML
         </h4>
-        <span>This migration has approximately ~90% accuracy, depending on the YAML tasks. <br />For items unable to be migrated, a "#NOTE:" comment is added to the results</span>
+        <span>This migration has approximately ~90% accuracy, depending on the YAML tasks. <br />For tasks unable to be migrated, a comment is added to the results</span>
         <div class="container">
             <div class="row">
                 <div class="col-sm-6" style="height:60vh;">
@@ -58,8 +58,7 @@
                     <button asp-controller="home" asp-action="MavenExample">Maven</button>&nbsp;
                     <button asp-controller="home" asp-action="NodeExample">NodeJS</button>&nbsp;
                     <button asp-controller="home" asp-action="PythonExample">Python</button>&nbsp;
-                    @*<button asp-controller="home" asp-action="RubyExample">Ruby</button>*@&nbsp;
-                    (More samples coming soon)
+                    <button asp-controller="home" asp-action="RubyExample">Ruby</button>&nbsp;
                 </div>
             </div>
         </div>
