@@ -56,7 +56,7 @@
                 string appAssemblyLastBuildDate = dt.AddSeconds(secondsSince1970).ToString("dd-MMM-yyyy hh:mm:sstt");
 
             }
-            &copy; @DateTime.Now.Year - Pipelines To Actions - (Last built: @appAssemblyLastBuildDate, using <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter">AzurePipelinesToGitHubActionsConverter</a> version @Assembly.LoadFile(Assembly.GetEntryAssembly()?.Location.Replace("PipelinesToActionsWeb", "AzurePipelinesToGitHubActionsConverter.Core")).GetName().Version.Revision)
+            &copy; @DateTime.Now.Year - Pipelines To Actions - (Last built: @appAssemblyLastBuildDate, using <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter">AzurePipelinesToGitHubActionsConverter</a> version @Assembly.LoadFile(Assembly.GetEntryAssembly()?.Location.Replace("PipelinesToActionsWeb", "AzurePipelinesToGitHubActionsConverter.Core")).GetName().Version)
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
