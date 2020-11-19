@@ -4,11 +4,10 @@ on: [push]
 
 jobs:
   build:
-
-    runs-on: windows-latest
-    
+    runs-on: windows-latest    
     env:
       buildVersion: 1.0.0.0 #The initial build version, but this is updated below
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true #Allow us to set an environment variable in the PowerShell script to set the package version (technically deprecated)
 
     steps:
     - uses: actions/checkout@v1
