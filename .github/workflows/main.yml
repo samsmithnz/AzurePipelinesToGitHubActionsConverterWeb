@@ -50,7 +50,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: webapp
-        path: PipelinesToActions/PipelinesToActions/bin/Release/netcoreapp3.0/publish
+        path: PipelinesToActions/PipelinesToActions/bin/Release/netcoreapp3.1/publish
   
   #Deploy the artifacts to Azure
   deploy:
