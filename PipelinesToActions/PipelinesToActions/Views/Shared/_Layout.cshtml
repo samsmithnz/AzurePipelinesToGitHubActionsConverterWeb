@@ -59,7 +59,7 @@
             &copy; @DateTime.Now.Year - Pipelines To Actions - (Last built: @appAssemblyLastBuildDate, using <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter">AzurePipelinesToGitHubActionsConverter</a>: version @Assembly.LoadFile(Assembly.GetEntryAssembly()?.Location.Replace("PipelinesToActionsWeb", "AzurePipelinesToGitHubActionsConverter.Core")).GetName().Version)
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)

@@ -1,4 +1,4 @@
-﻿using AzurePipelinesToGitHubActionsConverter.Core.Conversion;
+﻿using AzurePipelinesToGitHubActionsConverter.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PipelinesToActionsWeb.Models;
@@ -81,7 +81,6 @@ namespace PipelinesToActionsWeb.Controllers
                 return gitHubResult;
             }
         }
-
 
 
         [HttpGet]
