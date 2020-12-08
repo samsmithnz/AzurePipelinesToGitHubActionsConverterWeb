@@ -83,7 +83,6 @@ namespace PipelinesToActionsWeb.Controllers
         }
 
 
-
         [HttpGet]
         [HttpPost]
         public IActionResult ASPDotNetCoreSimpleExample()
