@@ -20,6 +20,7 @@ namespace PipelinesToActionsWeb.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         public IActionResult Index()
         {
             ConversionResponse gitHubResult = new ConversionResponse();
