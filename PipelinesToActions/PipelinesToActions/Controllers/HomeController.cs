@@ -1,4 +1,5 @@
 ﻿using AzurePipelinesToGitHubActionsConverter.Core;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PipelinesToActionsWeb.Models;
@@ -13,13 +14,16 @@ namespace PipelinesToActionsWeb.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly TelemetryClient _telemetry;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, TelemetryClient telemetry)
         {
             _logger = logger;
+            _telemetry = telemetry;
         }
 
         [HttpGet]
+        [HttpHead]
         public IActionResult Index()
         {
             ConversionResponse gitHubResult = new ConversionResponse();
@@ -69,6 +73,18 @@ namespace PipelinesToActionsWeb.Controllers
             //Return the result
             if (gitHubResult != null)
             {
+                //Log conversion task errors to application insights to track tasks that can't convert
+                //We are only capturing the task name and frequency to help with prioritization - no YAML is to be captured!
+                foreach (string comment in gitHubResult.comments)
+                {
+                    if (comment.IndexOf("#Note: Error! This step does not have a conversion path yet: ") >= 0)
+                    {
+                        //Log as exception to Application Insights
+                        string task = comment.Replace("#Note: Error! This step does not have a conversion path yet: ", "");
+                        _telemetry.TrackException(new Exception("Unknown Task: " + task));
+                    }
+                }
+
                 return gitHubResult;
             }
             else
