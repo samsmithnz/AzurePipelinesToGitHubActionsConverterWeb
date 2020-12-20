@@ -1,4 +1,5 @@
 ﻿@using System.Reflection;
+@using System.Diagnostics;
 @using System.IO;
 @inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
 <!DOCTYPE html>
@@ -55,8 +56,10 @@
                 DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 string appAssemblyLastBuildDate = dt.AddSeconds(secondsSince1970).ToString("dd-MMM-yyyy hh:mm:sstt");
 
+                string version = Assembly.LoadFile(Assembly.GetEntryAssembly()?.Location.Replace("PipelinesToActionsWeb", "AzurePipelinesToGitHubActionsConverter.Core")).GetName().Version.ToString();
+
             }
-            &copy; @DateTime.Now.Year - Pipelines To Actions - (Last built: @appAssemblyLastBuildDate, using <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter">AzurePipelinesToGitHubActionsConverter</a>: version @Assembly.LoadFile(Assembly.GetEntryAssembly()?.Location.Replace("PipelinesToActionsWeb", "AzurePipelinesToGitHubActionsConverter.Core")).GetName().Version)
+            &copy; @DateTime.Now.Year - Pipelines To Actions - (Last built: @appAssemblyLastBuildDate, using <a href="https://github.com/samsmithnz/AzurePipelinesToGitHubActionsConverter">AzurePipelinesToGitHubActionsConverter</a>: version @version)
         </div>
     </footer>
     <script src="~/lib/jquery/jquery.min.js"></script>
