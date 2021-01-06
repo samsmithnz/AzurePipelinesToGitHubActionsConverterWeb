@@ -79,10 +79,10 @@ namespace PipelinesToActionsWeb.Controllers
                     //We are only capturing the task name and frequency to help with prioritization - no YAML is to be captured!
                     foreach (string comment in gitHubResult.comments)
                     {
-                        if (comment.IndexOf("#Note: Error! This step does not have a conversion path yet: ") >= 0)
+                        if (comment.IndexOf("' does not have a conversion path yet") >= 0)
                         {
                             //Log as exception to Application Insights
-                            string task = comment.Replace("#Note: Error! This step does not have a conversion path yet: ", "");
+                            string task = comment.Replace("#Error: the step '", "").Replace("' does not have a conversion path yet", "");
                             _telemetry.TrackException(new Exception("Unknown Task: " + task));
                         }
                     }
