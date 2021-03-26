@@ -11,7 +11,7 @@ namespace PipelinesToActionsWeb.Models
         {
             string yaml = @"
 trigger:
-- master
+- main
 
 variables:
   buildConfiguration: 'Release'
@@ -51,7 +51,7 @@ jobs:
         {
             string yaml = @"
 trigger:
-- master
+- main
 
 variables:
   buildConfiguration: 'Release'
@@ -62,7 +62,7 @@ jobs:
   displayName: ""Deploy job""
   pool:
     vmImage: ubuntu-latest
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   variables:
     AppSettings.Environment: 'data'
     ArmTemplateResourceGroupLocation: 'eu'
@@ -102,7 +102,7 @@ jobs:
         {
             string yaml = @"
 trigger:
-- master
+- main
 pr:
   branches:
     include:
@@ -172,7 +172,7 @@ stages:
 
 - stage: Deploy
   displayName: 'Deploy Prod'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   jobs:
   - job: Deploy
     displayName: ""Deploy job""
@@ -230,64 +230,38 @@ stages:
             return yaml;
         }
 
-        public static string ContainerExample()
+        public static string DockerExample()
         {
             string yaml = @"
-pool:
-  vmImage: 'ubuntu-16.04'
-
-strategy:
-  matrix:
-    DotNetCore22:
-      containerImage: mcr.microsoft.com/dotnet/core/sdk:2.2
-    DotNetCore22Nightly:
-      containerImage: mcr.microsoft.com/dotnet/core-nightly/sdk:2.2
-
-container: $[ variables['containerImage'] ]
+trigger:
+- main
 
 resources:
-  containers:
-  - container: redis
-    image: redis
-
-services:
-  redis: redis
+- repo: self
 
 variables:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '{{ containerRegistryConnection.Id }}'
+  imageRepository: '{{#toAlphaNumericString imageRepository 50}}{{/toAlphaNumericString}}'
+  containerRegistry: '{{ containerRegistryConnection.Authorization.Parameters.loginServer }}'
+  dockerfilePath: '{{ dockerfilePath }}'
+  tag: '$(Build.BuildId)'
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: Build
-  inputs:
-    command: build
-    projects: '**/*.csproj'
-    arguments: '--configuration release'
-
-- task: DotNetCoreCLI@2
-  displayName: Test
-  inputs:
-    command: test
-    projects: '**/*Tests.csproj'
-    arguments: '--configuration release'
-  env:
-    CONNECTIONSTRINGS_REDIS: redis:6379
-
-- task: DotNetCoreCLI@2
-  displayName: Publish
-  inputs:
-    command: publish
-    projects: 'MyProject/MyProject.csproj'
-    publishWebProjects: false
-    zipAfterPublish: false
-    arguments: '--configuration release'
-
-- task: PublishPipelineArtifact@0
-  displayName: Store artifact
-  inputs:
-    artifactName: 'MyProject'
-    targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'
-  condition: and(succeeded(), endsWith(variables['Agent.JobName'], 'DotNetCore22'))
+jobs:
+- job: BuildJob
+  displayName: Build and push
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - task: Docker@2
+    displayName: Build and push an image to container registry
+    inputs:
+      command: buildAndPush
+      repository: $(imageRepository)
+      dockerfile: $(dockerfilePath)
+      containerRegistry: $(dockerRegistryServiceConnection)
+      tags: |
+        $(tag)
 ";
             return yaml;
         }
@@ -302,7 +276,7 @@ steps:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'windows-latest'
@@ -338,7 +312,7 @@ steps:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'macos-latest'
@@ -366,7 +340,7 @@ steps:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -391,7 +365,7 @@ steps:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -408,43 +382,6 @@ steps:
             return yaml;
         }
 
-        //https://github.com/microsoft/azure-pipelines-yaml/blob/master/templates/docker-build.yml
-        public static string DockerBuildExample()
-        {
-            string yaml = @"
-# Docker
-# Build a Docker image 
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
-trigger:
-- master
-
-resources:
-- repo: self
-
-variables:
-  tag: '$(Build.BuildId)'
-
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:  
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '{{ dockerfilePath }}'
-        tags: |
-          $(tag)
-";
-            return yaml;
-        }
-
         public static string ASPDotNetFrameworkExample()
         {
             string yaml = @"
@@ -457,7 +394,7 @@ ASPDotNetFrameworkExample Coming soon
         {
             string yaml = @"
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -480,7 +417,7 @@ steps:
         {
             string yaml = @"
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -504,7 +441,7 @@ steps:
         {
             string yaml = @"
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -536,7 +473,7 @@ steps:
         {
             string yaml = @"
 trigger:
-- master
+- main
 
 pool:
   vmImage: 'ubuntu-latest'

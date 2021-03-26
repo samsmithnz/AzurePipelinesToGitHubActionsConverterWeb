@@ -168,9 +168,9 @@ namespace PipelinesToActionsWeb.Controllers
 
         [HttpGet]
         [HttpPost]
-        public IActionResult ContainerExample()
+        public IActionResult DockerExample()
         {
-            string yaml = Examples.ContainerExample();
+            string yaml = Examples.DockerExample();
             ConversionResponse gitHubResult = ProcessConversion(yaml);
             return View(viewName: "Index", model: gitHubResult);
         }
