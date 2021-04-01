@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.ApplicationInsights.SnapshotCollector;
 
 namespace PipelinesToActionsWeb
 {
@@ -24,7 +25,8 @@ namespace PipelinesToActionsWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry(); 
+            services.AddSnapshotCollector((configuration) => Configuration.Bind(nameof(SnapshotCollectorConfiguration), configuration));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
