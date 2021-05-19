@@ -1,4 +1,4 @@
-﻿@model AzurePipelinesToGitHubActionsConverter.Core.ConversionResponse
+﻿@model (AzurePipelinesToGitHubActionsConverter.Core.ConversionResponse, bool)
 @{
     ViewData["Title"] = "Home";
 }
@@ -16,7 +16,7 @@
                     <div class="codeHeader lang-html" data-bi-name="code-header">
                         <span class="language">Azure DevOps Pipeline YAML</span>
                     </div>
-                    <textarea rows="20" cols="60" id="txtAzurePipelinesYAML" name="txtAzurePipelinesYAML" style="height: 90%; width: 100%; text-align: left; white-space: nowrap; overflow: auto; font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace; font-size: 12px; color: #333; font-weight: 400;">@Model.pipelinesYaml</textarea>
+                    <textarea rows="20" cols="60" id="txtAzurePipelinesYAML" name="txtAzurePipelinesYAML" style="height: 90%; width: 100%; text-align: left; white-space: nowrap; overflow: auto; font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace; font-size: 12px; color: #333; font-weight: 400;">@Model.Item1.pipelinesYaml</textarea>
                 </div>
                 <div class="col-sm-6" style="height:60vh;">
                     <div class="codeHeader lang-html" data-bi-name="code-header">
@@ -24,13 +24,14 @@
                         <button class="action" data-bi-name="copy" onclick="selectElementContentsById('txtActionsYAML')"><svg class="vector-icon" focusable="false" viewBox="0 0 14 14"><path d="M13 6.8V14H4v-3H0V0h5.2l3 3h1L13 6.8zM4 3h2.8l-2-2H1v9h3V3zm8 5H8V4H5v9h7V8zM9 7h2.8L9 4.2V7z"></path></svg> Copy</button>
                     </div>
                     <pre id="txtActionsYAML" style="height: 90%; text-align: left;">
-@Model.actionsYaml
+@Model.Item1.actionsYaml
                     </pre>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
                     <button asp-controller="home" asp-action="Index">Process YAML</button><br />
+                    @Html.CheckBox("chkAddWorkflowDispatch", Model.Item2) Add workflow dispatch trigger (run GitHub actions on demand)<br />
                 </div>
             </div>
             <br />
@@ -46,8 +47,8 @@
             </div>
             <div class="row">
                 <div class="col-sm-12" style="margin-bottom: 8px">
-                    @*<button asp-controller="home" asp-action="ASPDotNetCoreSimpleExample">ASP.NET Core</button>&nbsp;       
-        <button asp-controller="home" asp-action="ASPDotNetFrameworkExample">ASP.NET Framework</button>&nbsp;*@
+                    @*<button asp-controller="home" asp-action="ASPDotNetCoreSimpleExample">ASP.NET Core</button>&nbsp;
+                        <button asp-controller="home" asp-action="ASPDotNetFrameworkExample">ASP.NET Framework</button>&nbsp;*@
 
                 </div>
             </div>

@@ -27,18 +27,18 @@ namespace PipelinesToActionsWeb.Controllers
         public IActionResult Index()
         {
             ConversionResponse gitHubResult = new ConversionResponse();
-            return View(viewName: "Index", model: gitHubResult);
+            return View(viewName: "Index", model: (gitHubResult, false));
         }
 
         [HttpPost]
-        public IActionResult Index(string txtAzurePipelinesYAML)
+        public IActionResult Index(string txtAzurePipelinesYAML, bool chkAddWorkflowDispatch)
         {
-            ConversionResponse gitHubResult = ProcessConversion(txtAzurePipelinesYAML);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(txtAzurePipelinesYAML, chkAddWorkflowDispatch);
 
             return View(model: gitHubResult);
         }
 
-        private ConversionResponse ProcessConversion(string input)
+        private (ConversionResponse, bool) ProcessConversion(string input, bool chkAddWorkflowDispatch = false)
         {
             if (string.IsNullOrEmpty(input) == false)
             {
@@ -50,7 +50,7 @@ namespace PipelinesToActionsWeb.Controllers
             try
             {
                 Conversion conversion = new Conversion();
-                gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(input);
+                gitHubResult = conversion.ConvertAzurePipelineToGitHubAction(input, chkAddWorkflowDispatch);
             }
             catch (YamlDotNet.Core.YamlException ex)
             {
@@ -88,7 +88,7 @@ namespace PipelinesToActionsWeb.Controllers
                     }
                 }
 
-                return gitHubResult;
+                return (gitHubResult, chkAddWorkflowDispatch);
             }
             else
             {
@@ -97,126 +97,126 @@ namespace PipelinesToActionsWeb.Controllers
                     actionsYaml = "Unknown error",
                     pipelinesYaml = input
                 };
-                return gitHubResult;
+                return (gitHubResult, chkAddWorkflowDispatch);
             }
         }
 
 
-        [HttpGet]
-        [HttpPost]
-        public IActionResult ASPDotNetCoreSimpleExample()
-        {
-            string yaml = Examples.ASPDotNetCoreSimpleExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
-            return View(viewName: "Index", model: gitHubResult);
-        }
+        //[HttpGet]
+        //[HttpPost]
+        //public IActionResult ASPDotNetCoreSimpleExample(bool chkAddWorkflowDispatch = false)
+        //{
+        //    string yaml = Examples.ASPDotNetCoreSimpleExample();
+        //    (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
+        //    return View(viewName: "Index", model: gitHubResult);
+        //}
 
         [HttpGet]
         [HttpPost]
-        public IActionResult DotNetFrameworkDesktopExample()
+        public IActionResult DotNetFrameworkDesktopExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.DotNetFrameworkDesktopExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult ASPDotNetFrameworkExample()
+        public IActionResult ASPDotNetFrameworkExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.ASPDotNetFrameworkExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult NodeExample()
+        public IActionResult NodeExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.NodeExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
 
         [HttpGet]
         [HttpPost]
-        public IActionResult CIExample()
+        public IActionResult CIExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.CIExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult CDExample()
+        public IActionResult CDExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.CDExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult CICDExample()
+        public IActionResult CICDExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.CICDExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult DockerExample()
+        public IActionResult DockerExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.DockerExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult AntExample()
+        public IActionResult AntExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.AntExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult GradleExample()
+        public IActionResult GradleExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.GradleExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult MavenExample()
+        public IActionResult MavenExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.MavenExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult PythonExample()
+        public IActionResult PythonExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.PythonExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult RubyExample()
+        public IActionResult RubyExample(bool chkAddWorkflowDispatch = false)
         {
             string yaml = Examples.RubyExample();
-            ConversionResponse gitHubResult = ProcessConversion(yaml);
+            (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
 
