@@ -1,0 +1,3 @@
+dotnet restore PipelinesToActions/PipelinesToActions.sln
+cd PipelinesToActions/PipelinesToActions
+dotnet run PipelinesToActions/PipelinesToActions/PipelinesToActions.sln
