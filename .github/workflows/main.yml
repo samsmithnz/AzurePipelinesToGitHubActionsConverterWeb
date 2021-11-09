@@ -41,8 +41,13 @@ jobs:
     #- name: Run automated unit and integration tests
     #  run: dotnet build AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb.csproj --configuration Release
 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
     #Publish dotnet objects
-    - name: DotNET Publish Web Site
+    - name: .NET Publish Web Site
       run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version=${{env.buildVersion}}
     
     #Publish build artifacts to GitHub
@@ -50,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: webapp
-        path: PipelinesToActions/PipelinesToActions/bin/Release/netcoreapp3.1/publish
+        path: PipelinesToActions/PipelinesToActions/bin/Release/net6.0/publish
   
   #Deploy the artifacts to Azure
   deploy:
