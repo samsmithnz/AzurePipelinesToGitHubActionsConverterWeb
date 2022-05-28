@@ -5,37 +5,24 @@ on: [push]
 jobs:
   build:
     runs-on: windows-latest    
-    env:
-      buildVersion: 1.0.0.0 #The initial build version, but this is updated below
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true #Allow us to set an environment variable in the PowerShell script to set the package version (technically deprecated)
-
+    outputs: # https://stackoverflow.com/questions/59175332/using-output-from-a-previous-job-in-a-new-one-in-a-github-action
+      Version: ${{ steps.gitversion.outputs.SemVer }}
+      CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}  
     steps:
-    - uses: actions/checkout@v1
-    - name: Custom script to create a unique application version number for this build
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 #fetch-depth is needed for GitVersion             
+    - name: Install GitVersion #Install and calculate the new version with GitVersion 
+      uses: gittools/actions/gitversion/setup@v0.9.13
+      with:
+        versionSpec: 5.x
+    - name: Determine Version
+      uses: gittools/actions/gitversion/execute@v0.9.13
+      id: gitversion # step id used as reference for output values
+    - name: Display GitVersion outputs
       run: |
-        Write-Host "Generating Build Number"
-        #Get the version from the csproj file
-        $xml = [Xml] (Get-Content PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj)
-        $initialVersion = [Version] $xml.Project.PropertyGroup.Version
-        Write-Host "Initial Version: " $version
-        $spliteVersion = $initialVersion -Split "\."
-        #Get the build number (number of days since January 1, 2000)
-        $baseDate = [datetime]"01/01/2000"
-        $currentDate = $(Get-Date)
-        $interval = (NEW-TIMESPAN -Start $baseDate -End $currentDate)
-        $buildNumber = $interval.Days
-        #Get the revision number (number seconds (divided by two) into the day on which the compilation was performed)
-        $StartDate=[datetime]::Today
-        $EndDate=(GET-DATE)
-        $revisionNumber = [math]::Round((New-TimeSpan -Start $StartDate -End $EndDate).TotalSeconds / 2,0)
-        #Final version number
-        $finalBuildVersion = "$($spliteVersion[0]).$($spliteVersion[1]).$($buildNumber).$($revisionNumber)"
-        Write-Host "Major.Minor,Build,Revision"
-        Write-Host "Final build number: " $finalBuildVersion
-        #Writing final version number back to Github variable
-        Write-Host "Writing final version $finalBuildVersion back to Github variable"
-        echo "::set-env name=buildVersion::$finalBuildVersion"
-      shell: powershell
+        echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
+        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
       
     #Build and test service   
     #- name: Run automated unit and integration tests
@@ -48,7 +35,7 @@ jobs:
 
     #Publish dotnet objects
     - name: .NET Publish Web Site
-      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version=${{env.buildVersion}}
+      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.SemVer }}'
     
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
@@ -64,23 +51,31 @@ jobs:
     #Only deploy if running off the main branch - we don't want to deploy off feature branches
     if: github.ref == 'refs/heads/main'
     
-    steps:
-    # Login with the secret SP details
-    - name: Log into Azure
+    steps:    
+    - name: Display GitVersion outputs
+      run: |
+        echo "Version: ${{ needs.build.outputs.Version }}" 
+        echo "CommitsSinceVersionSource: ${{ needs.build.outputs.CommitsSinceVersionSource }}" 
+    - name: Log into Azure # Login with the secret SP details
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_SP }}
-        
-    #Download the artifacts from GitHub
-    - name: Download webapp artifact
+    - name: Download webapp artifact #Download the artifacts from GitHub
       uses: actions/download-artifact@v1.0.0
       with:
         name: webapp
-            
-    #Deploy service and website to Azure staging slots
-    - name: Deploy web service to Azure WebApp
+    - name: Deploy web service to Azure WebApp #Deploy service and website to Azure staging slots
       uses: Azure/webapps-deploy@v1
       with:
         app-name: pipelinestoactions
         package: webapp
-        slot-name: production
+        slot-name: production      
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only create a release if there has been a commit/version change
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ needs.build.outputs.Version }}
+        release_name: Release ${{ needs.build.outputs.Version }} 
