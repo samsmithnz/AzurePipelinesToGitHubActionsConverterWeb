@@ -49,7 +49,7 @@ jobs:
     runs-on: windows-latest
     needs: build 
     #Only deploy if running off the main branch - we don't want to deploy off feature branches
-    #if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     
     steps:    
     - name: Display GitVersion outputs
@@ -73,7 +73,7 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-      if: 0 == 2 && needs.build.outputs.CommitsSinceVersionSource > 0 #Only create a release if there has been a commit/version change
+      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only create a release if there has been a commit/version change
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
