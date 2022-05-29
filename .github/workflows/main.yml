@@ -67,7 +67,7 @@ jobs:
     - name: Deploy web service to Azure WebApp #Deploy service and website to Azure staging slots
       uses: Azure/webapps-deploy@v1
       with:
-        app-name: pipelinestoactions
+        app-name: PipelinesToActions
         package: webapp
         slot-name: production      
     - name: Create Release
