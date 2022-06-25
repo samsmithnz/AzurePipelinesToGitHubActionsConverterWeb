@@ -39,7 +39,7 @@ jobs:
     
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: webapp
         path: PipelinesToActions/PipelinesToActions/bin/Release/net6.0/publish
