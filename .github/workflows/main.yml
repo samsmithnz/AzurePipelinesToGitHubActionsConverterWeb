@@ -64,6 +64,7 @@ jobs:
       uses: actions/download-artifact@v3.0.0
       with:
         name: webapp
+        path: webapp
     - name: Deploy web service to Azure WebApp #Deploy service and website to Azure staging slots
       uses: Azure/webapps-deploy@v2
       with:
