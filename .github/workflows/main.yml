@@ -61,7 +61,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_SP }}
     - name: Download webapp artifact #Download the artifacts from GitHub
-      uses: actions/download-artifact@v3.0.0
+      uses: actions/download-artifact@v3.0.1
       with:
         name: webapp
         path: webapp
