@@ -93,7 +93,9 @@ jobs:
   #Deploy the artifacts to Azure
   deploy:
     runs-on: windows-latest
-    needs: build 
+    needs: 
+    - build 
+    - sonarCloud
     #Only deploy if running off the main branch - we don't want to deploy off feature branches
     if: github.ref == 'refs/heads/main'
     
