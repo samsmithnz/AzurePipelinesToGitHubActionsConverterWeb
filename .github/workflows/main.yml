@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: webapp
-        path: PipelinesToActions/PipelinesToActions/bin/Release/net6.0/publish
+        path: PipelinesToActions/PipelinesToActions/bin/Release/net7.0/publish
  
         
   sonarCloud:
@@ -101,7 +101,6 @@ jobs:
     - sonarCloud
     #Only deploy if running off the main branch - we don't want to deploy off feature branches
     if: github.ref == 'refs/heads/main'
-    
     steps:    
     - name: Display GitVersion outputs
       run: |
