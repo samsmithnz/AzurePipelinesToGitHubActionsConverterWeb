@@ -8,8 +8,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38BF15EE-9A50-4432-9EDB-54E81FB98A90}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\codeql-analysis.yml = ..\.github\workflows\codeql-analysis.yml
+		..\GitVersion.yml = ..\GitVersion.yml
 		..\.github\workflows\main.yml = ..\.github\workflows\main.yml
+		..\README.md = ..\README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelinesToActions.Tests", "PipelinesToActions.Tests\PipelinesToActions.Tests.csproj", "{42CE0649-EB3E-4BA3-8A39-5E2793F9CD9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,10 @@ Global
 		{EE948FA8-1138-4417-AB69-986C626CE342}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE948FA8-1138-4417-AB69-986C626CE342}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE948FA8-1138-4417-AB69-986C626CE342}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42CE0649-EB3E-4BA3-8A39-5E2793F9CD9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42CE0649-EB3E-4BA3-8A39-5E2793F9CD9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42CE0649-EB3E-4BA3-8A39-5E2793F9CD9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42CE0649-EB3E-4BA3-8A39-5E2793F9CD9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
