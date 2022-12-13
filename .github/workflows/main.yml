@@ -22,28 +22,70 @@ jobs:
     - name: Display GitVersion outputs
       run: |
         echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
-        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
-      
+        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"    
     #Build and test service   
     #- name: Run automated unit and integration tests
     #  run: dotnet build AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb/AzurePipelinesToGitHubActionsConverterWeb.csproj --configuration Release
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-
     #Publish dotnet objects
     - name: .NET Publish Web Site
-      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.SemVer }}'
-    
+      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.SemVer }}'    
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
       uses: actions/upload-artifact@v3
       with:
         name: webapp
         path: PipelinesToActions/PipelinesToActions/bin/Release/net6.0/publish
-  
+ 
+        
+  sonarCloud:
+    name: Run SonarCloud analysis
+    runs-on: windows-latest
+    steps:
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Install .NET 7 SDK
+        uses: actions/setup-dotnet@v3.0.3
+        with:
+          dotnet-version: 7.0.x
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v3
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"samsmithnz_SamSmithNZ.com" /o:"samsmithnz-github" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet build PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          
+        
   #Deploy the artifacts to Azure
   deploy:
     runs-on: windows-latest
