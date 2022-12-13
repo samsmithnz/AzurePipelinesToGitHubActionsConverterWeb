@@ -8,7 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38BF15EE-9A50-4432-9EDB-54E81FB98A90}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\codeql-analysis.yml = ..\.github\workflows\codeql-analysis.yml
+		..\GitVersion.yml = ..\GitVersion.yml
 		..\.github\workflows\main.yml = ..\.github\workflows\main.yml
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Global
