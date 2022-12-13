@@ -28,7 +28,7 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Run automated unit and integration tests
-      run: dotnet build PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj --configuration Debug -e:CollectCoverage=true -e:CoverletOutput=TestResults/ -e:CoverletOutputFormat=lcov
+      run: dotnet test PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj --configuration Debug -e:CollectCoverage=true -e:CoverletOutput=TestResults/ -e:CoverletOutputFormat=lcov
     - name: Publish coverage report to coveralls.io
       uses: coverallsapp/github-action@master
       with:
