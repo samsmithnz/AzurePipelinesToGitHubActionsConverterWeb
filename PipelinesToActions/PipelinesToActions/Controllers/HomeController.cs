@@ -54,6 +54,7 @@ namespace PipelinesToActionsWeb.Controllers
             }
             catch (YamlDotNet.Core.YamlException ex)
             {
+                //if the YAML conversion failed - highlight that.
                 gitHubResult = new ConversionResponse
                 {
                     actionsYaml = "Error processing YAML, it's likely the original YAML is not valid" + Environment.NewLine +
@@ -63,6 +64,7 @@ namespace PipelinesToActionsWeb.Controllers
             }
             catch (Exception ex)
             {
+                //Otherwise something else unexpected and bad happened
                 gitHubResult = new ConversionResponse
                 {
                     actionsYaml = "Unexpected error: " + ex.ToString(),
@@ -87,7 +89,6 @@ namespace PipelinesToActionsWeb.Controllers
                         }
                     }
                 }
-
                 return (gitHubResult, chkAddWorkflowDispatch);
             }
             else
@@ -137,7 +138,6 @@ namespace PipelinesToActionsWeb.Controllers
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
         }
-
 
         [HttpGet]
         [HttpPost]
