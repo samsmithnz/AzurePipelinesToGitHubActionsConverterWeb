@@ -56,7 +56,7 @@ jobs:
       - name: Run Sonarcloud test
         uses: samsmithnz/SamsDotNetSonarCloudAction@1.2.0
         with:
-          projects: 'PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj,PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj'
+          projects: 'PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj' # ',PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj'
           dotnet-version: '7.0.x'
           sonarcloud-organization: samsmithnz-github
           sonarcloud-project: samsmithnz_AzurePipelinesToGitHubActionsConverterWeb
