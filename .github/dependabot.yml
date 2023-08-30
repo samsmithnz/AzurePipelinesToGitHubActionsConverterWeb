@@ -9,9 +9,20 @@ updates:
   open-pull-requests-limit: 10
   assignees:
   - "samsmithnz"
+  groups:
+    web:
+      patterns: ["*"]
+      update-types: ["minor", "patch"]
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
-    interval: "daily"
+    interval: daily
+    time: "06:00"
+    timezone: America/New_York
+  open-pull-requests-limit: 10
   assignees:
   - "samsmithnz"
+  groups:
+    actions:
+      patterns: ["*"]
+      update-types: ["minor", "patch"]

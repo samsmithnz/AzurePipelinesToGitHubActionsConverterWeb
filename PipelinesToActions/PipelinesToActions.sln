@@ -8,12 +8,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38BF15EE-9A50-4432-9EDB-54E81FB98A90}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\codeql-analysis.yml = ..\.github\workflows\codeql-analysis.yml
+		..\.github\dependabot.yml = ..\.github\dependabot.yml
 		..\GitVersion.yml = ..\GitVersion.yml
 		..\.github\workflows\main.yml = ..\.github\workflows\main.yml
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelinesToActions.Tests", "PipelinesToActions.Tests\PipelinesToActions.Tests.csproj", "{42CE0649-EB3E-4BA3-8A39-5E2793F9CD9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipelinesToActions.Tests", "PipelinesToActions.Tests\PipelinesToActions.Tests.csproj", "{42CE0649-EB3E-4BA3-8A39-5E2793F9CD9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
