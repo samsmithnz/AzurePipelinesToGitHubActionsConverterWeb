@@ -26,7 +26,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
     - name: Run automated unit and integration tests
       run: dotnet test PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj --configuration Debug -e:CollectCoverage=true -e:CoverletOutput=TestResults/ -e:CoverletOutputFormat=lcov 
     - run: |
@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: webapp
-        path: PipelinesToActions/PipelinesToActions/bin/Release/net7.0/publish
+        path: PipelinesToActions/PipelinesToActions/bin/Release/net8.0/publish
  
  
   sonarCloud:
@@ -57,7 +57,7 @@ jobs:
         uses: samsmithnz/SamsDotNetSonarCloudAction@v2.0.1
         with:
           projects: 'PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj,PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj'
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
           sonarcloud-organization: samsmithnz-github
           sonarcloud-project: samsmithnz_AzurePipelinesToGitHubActionsConverterWeb
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
