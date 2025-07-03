@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: windows-latest    
     outputs: # https://stackoverflow.com/questions/59175332/using-output-from-a-previous-job-in-a-new-one-in-a-github-action
-      Version: ${{ steps.gitversion.outputs.SemVer }}
+      Version: ${{ steps.gitversion.outputs.MajorMinorPatch }}
       CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}  
     steps:
     - uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
       id: gitversion # step id used as reference for output values
     - name: Display GitVersion outputs
       run: |
-        echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
+        echo "Version: ${{ steps.gitversion.outputs.MajorMinorPatch }}"
         echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"    
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -39,7 +39,7 @@ jobs:
         path-to-lcov: PipelinesToActions/PipelinesToActions.Tests/TestResults/coverage.info  
     #Publish dotnet objects
     - name: .NET Publish Web Site
-      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.SemVer }}'    
+      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.MajorMinorPatch }}'    
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
       uses: actions/upload-artifact@v4
