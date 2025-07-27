@@ -33,6 +33,13 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult Index(string txtAzurePipelinesYAML, bool chkAddWorkflowDispatch)
         {
+            if (!ModelState.IsValid)
+            {
+                // If model state is invalid, return to the form with an empty result
+                ConversionResponse emptyResult = new ConversionResponse();
+                return View(model: (emptyResult, chkAddWorkflowDispatch));
+            }
+
             (ConversionResponse, bool) gitHubResult = ProcessConversion(txtAzurePipelinesYAML, chkAddWorkflowDispatch);
 
             return View(model: gitHubResult);
@@ -116,6 +123,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult DotNetFrameworkDesktopExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.DotNetFrameworkDesktopExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -125,6 +137,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult ASPDotNetFrameworkExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.ASPDotNetFrameworkExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -134,6 +151,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult NodeExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.NodeExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -143,6 +165,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult CIExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.CIExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -152,6 +179,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult CDExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.CDExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -161,6 +193,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult CICDExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.CICDExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -170,6 +207,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult DockerExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.DockerExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -179,6 +221,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult AntExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.AntExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -188,6 +235,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult GradleExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.GradleExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -197,6 +249,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult MavenExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.MavenExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -206,6 +263,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult PythonExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.PythonExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
@@ -215,6 +277,11 @@ namespace PipelinesToActionsWeb.Controllers
         [HttpPost]
         public IActionResult RubyExample(bool chkAddWorkflowDispatch = false)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             string yaml = Examples.RubyExample();
             (ConversionResponse, bool) gitHubResult = ProcessConversion(yaml, chkAddWorkflowDispatch);
             return View(viewName: "Index", model: gitHubResult);
