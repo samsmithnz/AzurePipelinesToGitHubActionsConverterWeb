@@ -218,7 +218,7 @@ var assemblies = [
       { "name": "AspNetCoreGeneratedDocument.Views_Home_Privacy", "rp": "PipelinesToActionsWeb_Views_Home_Privacy.html", "cl": 0, "ucl": 2, "cal": 2, "tl": 11, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "AspNetCoreGeneratedDocument.Views_Shared__Layout", "rp": "PipelinesToActionsWeb_Views_Shared__Layout.html", "cl": 0, "ucl": 16, "cal": 16, "tl": 73, "cb": 0, "tb": 22, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "AspNetCoreGeneratedDocument.Views_Shared_Error", "rp": "PipelinesToActionsWeb_Views_Shared_Error.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 25, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PipelinesToActionsWeb.Controllers.HomeController", "rp": "PipelinesToActionsWeb_HomeController.html", "cl": 60, "ucl": 107, "cal": 167, "tl": 301, "cb": 14, "tb": 40, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PipelinesToActionsWeb.Controllers.HomeController", "rp": "PipelinesToActionsWeb_HomeController.html", "cl": 147, "ucl": 20, "cal": 167, "tl": 301, "cb": 37, "tb": 40, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "PipelinesToActionsWeb.Models.ErrorViewModel", "rp": "PipelinesToActionsWeb_ErrorViewModel.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 17, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "PipelinesToActionsWeb.Models.Examples", "rp": "PipelinesToActionsWeb_Examples.html", "cl": 450, "ucl": 0, "cal": 450, "tl": 491, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
@@ -245,12 +245,6 @@ var riskHotspots = [
     "metrics": [
       { "value": 342, "exceeded": true },
       { "value": 18, "exceeded": true },
-    ]},
-  {
-    "assembly": "PipelinesToActionsWeb", "class": "PipelinesToActionsWeb.Controllers.HomeController", "reportPath": "PipelinesToActionsWeb_HomeController.html", "methodName": "ProcessConversion(System.String,System.Boolean)", "methodShortName": "ProcessConversion(...)", "fileIndex": 0, "line": 49,
-    "metrics": [
-      { "value": 37, "exceeded": true },
-      { "value": 10, "exceeded": false },
     ]},
 ];
 
