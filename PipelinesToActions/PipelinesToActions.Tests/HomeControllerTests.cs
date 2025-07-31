@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
+using NSubstitute;
 using PipelinesToActionsWeb.Controllers;
 using PipelinesToActionsWeb.Models;
 using System.ComponentModel.DataAnnotations;
@@ -26,11 +26,11 @@ namespace PipelinesToActions.Tests
             _controller = new HomeController(_logger, _telemetryClient);
 
             // Setup HttpContext for Error method
-            var mockHttpContext = new Mock<HttpContext>();
-            mockHttpContext.Setup(x => x.TraceIdentifier).Returns("test-trace-id");
+            var mockHttpContext = Substitute.For<HttpContext>();
+            mockHttpContext.TraceIdentifier.Returns("test-trace-id");
             _controller.ControllerContext = new ControllerContext()
             {
-                HttpContext = mockHttpContext.Object
+                HttpContext = mockHttpContext
             };
         }
 
