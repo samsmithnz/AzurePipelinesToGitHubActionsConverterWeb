@@ -151,9 +151,24 @@
 (function() {
     var url = window.location.href;
     var startOfQueryString = url.indexOf('?');
-    var queryString = startOfQueryString > -1 ? url.substr(startOfQueryString) : '';
-
+    // Only allow whitelisted query parameters to be appended
+    var allowedParams = ['theme', 'lang']; // Add allowed parameter names here
+    var safeQueryString = '';
     if (startOfQueryString > -1) {
+        var query = url.substr(startOfQueryString + 1);
+        var params = query.split('&');
+        var safeParams = [];
+        for (var j = 0; j < params.length; j++) {
+            var kv = params[j].split('=');
+            var key = decodeURIComponent(kv[0]);
+            if (allowedParams.indexOf(key) !== -1) {
+                safeParams.push(encodeURIComponent(key) + (kv[1] ? '=' + encodeURIComponent(kv[1]) : ''));
+            }
+        }
+        if (safeParams.length > 0) {
+            safeQueryString = '?' + safeParams.join('&');
+        }
+    }
         var i = 0, href= null;
         var css = document.getElementsByTagName('link');
 
@@ -185,7 +200,7 @@
     }
 
     var newScript = document.createElement('script');
-    newScript.src = 'class.js' + queryString;
+    newScript.src = 'class.js' + safeQueryString;
     document.getElementsByTagName('body')[0].appendChild(newScript);
 })();
 /* ]]> */ 
