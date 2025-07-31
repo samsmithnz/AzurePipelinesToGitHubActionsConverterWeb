@@ -43,5 +43,50 @@ namespace PipelinesToActions.Tests
             Assert.AreEqual("abc", errorViewModel.RequestId);
             Assert.IsTrue(errorViewModel.ShowRequestId);
         }
+
+        [TestMethod]
+        public void ErrorModel_WithNullRequestId_ShowRequestIdReturnsFalse()
+        {
+            //Arrange
+            ErrorViewModel errorViewModel = new();
+            errorViewModel.RequestId = null;
+
+            //Act
+
+            //Assert
+            Assert.IsNotNull(errorViewModel);
+            Assert.IsNull(errorViewModel.RequestId);
+            Assert.IsFalse(errorViewModel.ShowRequestId);
+        }
+
+        [TestMethod]
+        public void ErrorModel_WithEmptyRequestId_ShowRequestIdReturnsFalse()
+        {
+            //Arrange
+            ErrorViewModel errorViewModel = new();
+            errorViewModel.RequestId = "";
+
+            //Act
+
+            //Assert
+            Assert.IsNotNull(errorViewModel);
+            Assert.AreEqual("", errorViewModel.RequestId);
+            Assert.IsFalse(errorViewModel.ShowRequestId);
+        }
+
+        [TestMethod]
+        public void ErrorModel_WithWhitespaceRequestId_ShowRequestIdReturnsTrue()
+        {
+            //Arrange
+            ErrorViewModel errorViewModel = new();
+            errorViewModel.RequestId = "   ";
+
+            //Act
+
+            //Assert
+            Assert.IsNotNull(errorViewModel);
+            Assert.AreEqual("   ", errorViewModel.RequestId);
+            Assert.IsTrue(errorViewModel.ShowRequestId); // IsNullOrEmpty returns false for whitespace
+        }
     }
 }
