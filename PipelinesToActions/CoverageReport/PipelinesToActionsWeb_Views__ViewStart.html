@@ -137,6 +137,23 @@
     var startOfQueryString = url.indexOf('?');
     var queryString = startOfQueryString > -1 ? url.substr(startOfQueryString) : '';
 
+    // Helper: extract only whitelisted parameters from query string
+    function getSafeQueryString(queryString) {
+        var allowed = ['foo', 'bar']; // whitelist allowed parameters
+        if (!queryString || queryString.length < 2) return '';
+        var params = new URLSearchParams(queryString.substring(1));
+        var safeParams = new URLSearchParams();
+        allowed.forEach(function(key) {
+            if (params.has(key)) {
+                safeParams.set(key, params.get(key));
+            }
+        });
+        var safeStr = safeParams.toString();
+        return safeStr ? ('?' + safeStr) : '';
+    }
+
+    var safeQueryString = getSafeQueryString(queryString);
+
     if (startOfQueryString > -1) {
         var i = 0, href= null;
         var css = document.getElementsByTagName('link');
@@ -149,7 +166,7 @@
             href = css[i].getAttribute('href');
 
             if (href) {
-            css[i].setAttribute('href', href + queryString);
+            css[i].setAttribute('href', href + safeQueryString);
             }
         }
 
@@ -163,13 +180,13 @@
                 && !href.startsWith('https://')
                 && !href.startsWith('#')
                 && href.indexOf('?') === -1) {
-            links[i].setAttribute('href', href + queryString);
+            links[i].setAttribute('href', href + safeQueryString);
             }
         }
     }
 
     var newScript = document.createElement('script');
-    newScript.src = 'class.js' + queryString;
+    newScript.src = 'class.js' + safeQueryString;
     document.getElementsByTagName('body')[0].appendChild(newScript);
 })();
 /* ]]> */ 
