@@ -1,13 +1,18 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using PipelinesToActionsWeb.Controllers;
 using PipelinesToActionsWeb.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace PipelinesToActions.Tests
 {
@@ -25,13 +30,40 @@ namespace PipelinesToActions.Tests
             _telemetryClient = new TelemetryClient();
             _controller = new HomeController(_logger, _telemetryClient);
 
-            // Setup HttpContext for Error method
+            // Setup MVC services for proper controller testing
+            var services = new ServiceCollection();
+            services.AddMvc();
+            services.AddSingleton<ITempDataDictionaryFactory, TempDataDictionaryFactory>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Setup HttpContext for Error method and MVC services
             var mockHttpContext = Substitute.For<HttpContext>();
             mockHttpContext.TraceIdentifier.Returns("test-trace-id");
-            _controller.ControllerContext = new ControllerContext()
+            mockHttpContext.RequestServices.Returns(serviceProvider);
+
+            // Setup RouteData for URL generation
+            var routeData = new RouteData();
+            routeData.Values["controller"] = "Home";
+            routeData.Values["action"] = "Index";
+
+            // Create a proper ControllerActionDescriptor
+            var controllerActionDescriptor = new ControllerActionDescriptor
             {
-                HttpContext = mockHttpContext
+                ControllerName = "Home",
+                ActionName = "Index",
+                ControllerTypeInfo = typeof(HomeController).GetTypeInfo()
             };
+
+            var actionContext = new ActionContext(mockHttpContext, routeData, controllerActionDescriptor);
+
+            _controller.ControllerContext = new ControllerContext(actionContext);
+
+            // Initialize TempData with the factory
+            var tempDataFactory = serviceProvider.GetService<ITempDataDictionaryFactory>();
+            if (tempDataFactory != null)
+            {
+                _controller.TempData = tempDataFactory.GetTempData(mockHttpContext);
+            }
         }
 
         [TestMethod]
