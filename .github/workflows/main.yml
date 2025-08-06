@@ -33,7 +33,7 @@ jobs:
         dir PipelinesToActions/PipelinesToActions.Tests/TestResults
         type PipelinesToActions/PipelinesToActions.Tests/TestResults/coverage.info  
     - name: Publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2.3.6
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: PipelinesToActions/PipelinesToActions.Tests/TestResults/coverage.info  
