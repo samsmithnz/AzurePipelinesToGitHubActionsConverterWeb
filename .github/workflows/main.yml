@@ -42,7 +42,7 @@ jobs:
       run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.MajorMinorPatch }}'    
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: webapp
         path: PipelinesToActions/PipelinesToActions/bin/Release/net8.0/publish
