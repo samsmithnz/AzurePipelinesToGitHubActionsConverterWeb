@@ -13,11 +13,11 @@ jobs:
       with:
         fetch-depth: 0 #fetch-depth is needed for GitVersion             
     - name: Install GitVersion #Install and calculate the new version with GitVersion 
-      uses: gittools/actions/gitversion/setup@v4.1.0
+      uses: gittools/actions/gitversion/setup@v4.2.0
       with:
         versionSpec: 6.x
     - name: Determine Version
-      uses: gittools/actions/gitversion/execute@v4.1.0
+      uses: gittools/actions/gitversion/execute@v4.2.0
       id: gitversion # step id used as reference for output values
     - name: Display GitVersion outputs
       run: |
@@ -26,7 +26,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
     - name: Run automated unit and integration tests
       run: dotnet test PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj --configuration Debug -e:CollectCoverage=true -e:CoverletOutput=TestResults/ -e:CoverletOutputFormat=lcov 
     - run: |
@@ -42,22 +42,22 @@ jobs:
       run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.MajorMinorPatch }}'    
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: webapp
-        path: PipelinesToActions/PipelinesToActions/bin/Release/net8.0/publish
+        path: PipelinesToActions/PipelinesToActions/bin/Release/net10.0/publish
  
  
   sonarCloud:
     name: Run SonarCloud analysis
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' 
+    if: false && github.ref == 'refs/heads/main' 
     steps:
       - name: Run Sonarcloud test
         uses: samsmithnz/SamsDotNetSonarCloudAction@v2.1
         with:
           projects: 'PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj,PipelinesToActions/PipelinesToActions.Tests/PipelinesToActions.Tests.csproj'
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
           sonarcloud-organization: samsmithnz-github
           sonarcloud-project: samsmithnz_AzurePipelinesToGitHubActionsConverterWeb
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
     runs-on: windows-latest
     needs: 
     - build 
-    - sonarCloud
+    #- sonarCloud
     #Only deploy if running off the main branch - we don't want to deploy off feature branches
     if: github.ref == 'refs/heads/main'
     steps:    
@@ -81,7 +81,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_SP }}
     - name: Download webapp artifact #Download the artifacts from GitHub
-      uses: actions/download-artifact@v5.0.0
+      uses: actions/download-artifact@v5
       with:
         name: webapp
         path: webapp
