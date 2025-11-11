@@ -13,11 +13,11 @@ jobs:
       with:
         fetch-depth: 0 #fetch-depth is needed for GitVersion             
     - name: Install GitVersion #Install and calculate the new version with GitVersion 
-      uses: gittools/actions/gitversion/setup@v4.1.0
+      uses: gittools/actions/gitversion/setup@v4.2.0
       with:
         versionSpec: 6.x
     - name: Determine Version
-      uses: gittools/actions/gitversion/execute@v4.1.0
+      uses: gittools/actions/gitversion/execute@v4.2.0
       id: gitversion # step id used as reference for output values
     - name: Display GitVersion outputs
       run: |
@@ -42,7 +42,7 @@ jobs:
       run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.MajorMinorPatch }}'    
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: webapp
         path: PipelinesToActions/PipelinesToActions/bin/Release/net10.0/publish
@@ -81,7 +81,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_SP }}
     - name: Download webapp artifact #Download the artifacts from GitHub
-      uses: actions/download-artifact@v5.0.0
+      uses: actions/download-artifact@v5
       with:
         name: webapp
         path: webapp
