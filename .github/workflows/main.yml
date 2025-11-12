@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: webapp
-        path: PipelinesToActions/PipelinesToActions/bin/Release/net10.0/publish
+        path: PipelinesToActions/PipelinesToActions/bin/Release/net10.0/win-x86/publish
  
  
   sonarCloud:
