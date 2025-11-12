@@ -39,7 +39,7 @@ jobs:
         path-to-lcov: PipelinesToActions/PipelinesToActions.Tests/TestResults/coverage.info  
     #Publish dotnet objects
     - name: .NET Publish Web Site
-      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.MajorMinorPatch }}' -r Win-x32 --self-contained false -p:PublishSingleFile=false    
+      run: dotnet publish PipelinesToActions/PipelinesToActions/PipelinesToActionsWeb.csproj --configuration Release -p:Version='${{ steps.gitversion.outputs.MajorMinorPatch }}' -r win-x86 --self-contained false -p:PublishSingleFile=false    
     #Publish build artifacts to GitHub
     - name: Upload website build artifacts back to GitHub
       uses: actions/upload-artifact@v4
