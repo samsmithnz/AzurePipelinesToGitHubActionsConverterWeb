@@ -9,7 +9,7 @@ jobs:
       Version: ${{ steps.gitversion.outputs.MajorMinorPatch }}
       CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}  
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0 #fetch-depth is needed for GitVersion             
     - name: Install GitVersion #Install and calculate the new version with GitVersion 
@@ -33,7 +33,7 @@ jobs:
         dir PipelinesToActions/PipelinesToActions.Tests/TestResults
         type PipelinesToActions/PipelinesToActions.Tests/TestResults/coverage.info  
     - name: Publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@v2.3.6
+      uses: coverallsapp/github-action@v2.3.7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: PipelinesToActions/PipelinesToActions.Tests/TestResults/coverage.info  
@@ -81,7 +81,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_SP }}
     - name: Download webapp artifact #Download the artifacts from GitHub
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: webapp
         path: webapp
@@ -91,6 +91,7 @@ jobs:
         app-name: PipelinesToActions
         package: webapp
         slot-name: production      
+        clean: true
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
